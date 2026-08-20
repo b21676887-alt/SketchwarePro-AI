@@ -30,6 +30,7 @@ import pro.sketchware.databinding.ProgressMsgBoxBinding;
 import pro.sketchware.utility.FileUtil;
 import pro.sketchware.utility.SketchwareUtil;
 import pro.sketchware.utility.TranslationFunction;
+import android.view.WindowManager;
 
 public class BackupRestoreManager {
 
@@ -204,6 +205,7 @@ public class BackupRestoreManager {
 
         @Override
         protected void onPreExecute() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             ProgressMsgBoxBinding loadingDialogBinding = ProgressMsgBoxBinding.inflate(LayoutInflater.from(activityWeakReference.get()));
             loadingDialogBinding.tvProgress.setText("Creating backup...");
             dlg = new MaterialAlertDialogBuilder(activityWeakReference.get())
@@ -228,6 +230,7 @@ public class BackupRestoreManager {
         @Override
         protected void onPostExecute(String _result) {
             dlg.dismiss();
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
             if (bm.getOutFile() != null) {
                 SketchwareUtil.toast("Successfully created backup to: " + bm.getOutFile().getAbsolutePath());
@@ -253,6 +256,7 @@ public class BackupRestoreManager {
 
         @Override
         protected void onPreExecute() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             ProgressMsgBoxBinding loadingDialogBinding = ProgressMsgBoxBinding.inflate(LayoutInflater.from(activityWeakReference.get()));
             loadingDialogBinding.tvProgress.setText("Creating backup...");
             dlg = new MaterialAlertDialogBuilder(activityWeakReference.get())
@@ -273,6 +277,7 @@ public class BackupRestoreManager {
         @Override
         protected void onPostExecute(String _result) {
             dlg.dismiss();
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
             if (bm.getOutFile() != null) {
                 SketchwareUtil.toast("Successfully created backup to: " + bm.getOutFile().getAbsolutePath());
@@ -301,6 +306,7 @@ public class BackupRestoreManager {
 
         @Override
         protected void onPreExecute() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             ProgressMsgBoxBinding loadingDialogBinding = ProgressMsgBoxBinding.inflate(LayoutInflater.from(activityWeakReference.get()));
             loadingDialogBinding.tvProgress.setText("Restoring...");
             dlg = new MaterialAlertDialogBuilder(activityWeakReference.get())
@@ -329,6 +335,7 @@ public class BackupRestoreManager {
         @Override
         protected void onPostExecute(String _result) {
             dlg.dismiss();
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
             if (!bm.isRestoreSuccess() || error) {
                 SketchwareUtil.toastError("Couldn't restore: " + bm.error, Toast.LENGTH_LONG);
@@ -358,6 +365,7 @@ public class BackupRestoreManager {
 
         @Override
         protected void onPreExecute() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             ProgressMsgBoxBinding loadingDialogBinding = ProgressMsgBoxBinding.inflate(LayoutInflater.from(activityWeakReference.get()));
             loadingDialogBinding.tvProgress.setText("Restoring...");
             dlg = new MaterialAlertDialogBuilder(activityWeakReference.get())
@@ -385,6 +393,7 @@ public class BackupRestoreManager {
         @Override
         protected void onPostExecute(String _result) {
             dlg.dismiss();
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
             if (!bm.isRestoreSuccess() || error) {
                 SketchwareUtil.toastError("Couldn't restore: " + bm.error, Toast.LENGTH_LONG);
