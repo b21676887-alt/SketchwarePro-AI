@@ -3,6 +3,7 @@ package mod.hey.studios.project.backup;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -30,7 +31,6 @@ import pro.sketchware.databinding.ProgressMsgBoxBinding;
 import pro.sketchware.utility.FileUtil;
 import pro.sketchware.utility.SketchwareUtil;
 import pro.sketchware.utility.TranslationFunction;
-import android.view.WindowManager;
 
 public class BackupRestoreManager {
 
@@ -205,36 +205,46 @@ public class BackupRestoreManager {
 
         @Override
         protected void onPreExecute() {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            ProgressMsgBoxBinding loadingDialogBinding = ProgressMsgBoxBinding.inflate(LayoutInflater.from(activityWeakReference.get()));
-            loadingDialogBinding.tvProgress.setText("Creating backup...");
-            dlg = new MaterialAlertDialogBuilder(activityWeakReference.get())
-                    .setTitle("Please wait")
-                    .setCancelable(false)
-                    .setView(loadingDialogBinding.getRoot())
-                    .create();
-            dlg.show();
+            Activity activity = activityWeakReference.get();
+            if (activity != null && !activity.isFinishing()) {
+                activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                ProgressMsgBoxBinding loadingDialogBinding = ProgressMsgBoxBinding.inflate(LayoutInflater.from(activity));
+                loadingDialogBinding.tvProgress.setText("Creating backup...");
+                dlg = new MaterialAlertDialogBuilder(activity)
+                        .setTitle("Please wait")
+                        .setCancelable(false)
+                        .setView(loadingDialogBinding.getRoot())
+                        .create();
+                dlg.show();
+            }
         }
 
         @Override
         protected String doInBackground(String... params) {
-            bm = new BackupFactory(sc_id);
-            bm.setBackupLocalLibs(options.get(0));
-            bm.setBackupCustomBlocks(options.get(1));
+            Activity activity = activityWeakReference.get();
+            if (activity != null) {
+                bm = new BackupFactory(sc_id);
+                bm.setBackupLocalLibs(options.get(0));
+                bm.setBackupCustomBlocks(options.get(1));
 
-            bm.backup(activityWeakReference.get(), project_name);
-
+                bm.backup(activity, project_name);
+            }
             return "";
         }
 
         @Override
         protected void onPostExecute(String _result) {
-            dlg.dismiss();
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            Activity activity = activityWeakReference.get();
+            if (activity != null && !activity.isFinishing()) {
+                activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            if (dlg != null && dlg.isShowing()) {
+                dlg.dismiss();
+            }
 
-            if (bm.getOutFile() != null) {
+            if (bm != null && bm.getOutFile() != null) {
                 SketchwareUtil.toast("Successfully created backup to: " + bm.getOutFile().getAbsolutePath());
-            } else {
+            } else if (bm != null) {
                 SketchwareUtil.toastError("Error: " + bm.error, Toast.LENGTH_LONG);
             }
         }
@@ -256,15 +266,18 @@ public class BackupRestoreManager {
 
         @Override
         protected void onPreExecute() {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            ProgressMsgBoxBinding loadingDialogBinding = ProgressMsgBoxBinding.inflate(LayoutInflater.from(activityWeakReference.get()));
-            loadingDialogBinding.tvProgress.setText("Creating backup...");
-            dlg = new MaterialAlertDialogBuilder(activityWeakReference.get())
-                    .setTitle("Please wait")
-                    .setCancelable(false)
-                    .setView(loadingDialogBinding.getRoot())
-                    .create();
-            dlg.show();
+            Activity activity = activityWeakReference.get();
+            if (activity != null && !activity.isFinishing()) {
+                activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                ProgressMsgBoxBinding loadingDialogBinding = ProgressMsgBoxBinding.inflate(LayoutInflater.from(activity));
+                loadingDialogBinding.tvProgress.setText("Creating backup...");
+                dlg = new MaterialAlertDialogBuilder(activity)
+                        .setTitle("Please wait")
+                        .setCancelable(false)
+                        .setView(loadingDialogBinding.getRoot())
+                        .create();
+                dlg.show();
+            }
         }
 
         @Override
@@ -276,12 +289,17 @@ public class BackupRestoreManager {
 
         @Override
         protected void onPostExecute(String _result) {
-            dlg.dismiss();
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            Activity activity = activityWeakReference.get();
+            if (activity != null && !activity.isFinishing()) {
+                activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            if (dlg != null && dlg.isShowing()) {
+                dlg.dismiss();
+            }
 
-            if (bm.getOutFile() != null) {
+            if (bm != null && bm.getOutFile() != null) {
                 SketchwareUtil.toast("Successfully created backup to: " + bm.getOutFile().getAbsolutePath());
-            } else {
+            } else if (bm != null) {
                 SketchwareUtil.toastError("Error: " + bm.error, Toast.LENGTH_LONG);
             }
         }
@@ -306,15 +324,18 @@ public class BackupRestoreManager {
 
         @Override
         protected void onPreExecute() {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            ProgressMsgBoxBinding loadingDialogBinding = ProgressMsgBoxBinding.inflate(LayoutInflater.from(activityWeakReference.get()));
-            loadingDialogBinding.tvProgress.setText("Restoring...");
-            dlg = new MaterialAlertDialogBuilder(activityWeakReference.get())
-                    .setTitle("Please wait")
-                    .setCancelable(false)
-                    .setView(loadingDialogBinding.getRoot())
-                    .create();
-            dlg.show();
+            Activity activity = activityWeakReference.get();
+            if (activity != null && !activity.isFinishing()) {
+                activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                ProgressMsgBoxBinding loadingDialogBinding = ProgressMsgBoxBinding.inflate(LayoutInflater.from(activity));
+                loadingDialogBinding.tvProgress.setText("Restoring...");
+                dlg = new MaterialAlertDialogBuilder(activity)
+                        .setTitle("Please wait")
+                        .setCancelable(false)
+                        .setView(loadingDialogBinding.getRoot())
+                        .create();
+                dlg.show();
+            }
         }
 
         @Override
@@ -334,10 +355,15 @@ public class BackupRestoreManager {
 
         @Override
         protected void onPostExecute(String _result) {
-            dlg.dismiss();
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            Activity activity = activityWeakReference.get();
+            if (activity != null && !activity.isFinishing()) {
+                activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            if (dlg != null && dlg.isShowing()) {
+                dlg.dismiss();
+            }
 
-            if (!bm.isRestoreSuccess() || error) {
+            if (bm != null && (!bm.isRestoreSuccess() || error)) {
                 SketchwareUtil.toastError("Couldn't restore: " + bm.error, Toast.LENGTH_LONG);
             } else if (projectsFragment != null) {
                 projectsFragment.refreshProjectsList();
@@ -365,15 +391,18 @@ public class BackupRestoreManager {
 
         @Override
         protected void onPreExecute() {
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            ProgressMsgBoxBinding loadingDialogBinding = ProgressMsgBoxBinding.inflate(LayoutInflater.from(activityWeakReference.get()));
-            loadingDialogBinding.tvProgress.setText("Restoring...");
-            dlg = new MaterialAlertDialogBuilder(activityWeakReference.get())
-                    .setTitle("Please wait")
-                    .setCancelable(false)
-                    .setView(loadingDialogBinding.getRoot())
-                    .create();
-            dlg.show();
+            Activity activity = activityWeakReference.get();
+            if (activity != null && !activity.isFinishing()) {
+                activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                ProgressMsgBoxBinding loadingDialogBinding = ProgressMsgBoxBinding.inflate(LayoutInflater.from(activity));
+                loadingDialogBinding.tvProgress.setText("Restoring...");
+                dlg = new MaterialAlertDialogBuilder(activity)
+                        .setTitle("Please wait")
+                        .setCancelable(false)
+                        .setView(loadingDialogBinding.getRoot())
+                        .create();
+                dlg.show();
+            }
         }
 
         @Override
@@ -392,10 +421,15 @@ public class BackupRestoreManager {
 
         @Override
         protected void onPostExecute(String _result) {
-            dlg.dismiss();
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            Activity activity = activityWeakReference.get();
+            if (activity != null && !activity.isFinishing()) {
+                activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            if (dlg != null && dlg.isShowing()) {
+                dlg.dismiss();
+            }
 
-            if (!bm.isRestoreSuccess() || error) {
+            if (bm != null && (!bm.isRestoreSuccess() || error)) {
                 SketchwareUtil.toastError("Couldn't restore: " + bm.error, Toast.LENGTH_LONG);
             } else if (projectsFragment != null) {
                 projectsFragment.refreshProjectsList();
