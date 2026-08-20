@@ -28,16 +28,21 @@ import com.iyxan23.zipalignjava.ZipAlign;
 
 import org.xml.sax.SAXException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -46,8 +51,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.stream.Collectors;
+import java.util.zip.ZipFile;
 
 import mod.agus.jcoderz.dex.Dex;
 import mod.agus.jcoderz.dex.FieldId;
@@ -185,6 +194,13 @@ public class ProjectBuilder {
      */
     public void compileResources() throws Exception {
         timestampResourceCompilationStarted = System.currentTimeMillis();
+        // Resource linking is the first consumer of android.jar (before ECJ).
+        // Re-run extraction here so a damaged framework jar is repaired before AAPT2 starts.
+        BuiltInLibraries.extractCompileAssets(progressReceiver == null
+                ? new BuildProgressReceiver[0] : new BuildProgressReceiver[]{progressReceiver});
+        logCompiler("AAPT2 starting; android.jar=" + androidJarPath + "; exists="
+                + new File(androidJarPath).isFile() + "; size=" + new File(androidJarPath).length());
+        verifyAndroidJarBeforeCompile();
         ResourceCompiler compiler = new ResourceCompiler(
                 this,
                 aapt2Binary,
@@ -540,6 +556,9 @@ public class ProjectBuilder {
      */
     public void compileJavaCode() throws zy, IOException {
         long savedTimeMillis = System.currentTimeMillis();
+        logCompiler("Java compiler starting; android.jar=" + androidJarPath + "; exists="
+                + new File(androidJarPath).isFile() + "; size=" + new File(androidJarPath).length());
+        verifyAndroidJarBeforeCompile();
         sanitizeJavaSourcesBeforeCompile();
 
         class EclipseOutOutputStream extends OutputStream {
@@ -612,17 +631,37 @@ public class ProjectBuilder {
             /* Start compiling */
             org.eclipse.jdt.internal.compiler.batch.Main main = new org.eclipse.jdt.internal.compiler.batch.Main(outWriter, errWriter, false, null, null);
             LogUtil.d(TAG, "Running Eclipse compiler with these arguments: " + args);
+            logCompiler("ECJ arguments: " + args);
             main.compile(args.toArray(new String[0]));
 
             LogUtil.d(TAG, "System.out of Eclipse compiler: " + outOutputStream.getOut());
             if (main.globalErrorsCount <= 0) {
                 LogUtil.d(TAG, "System.err of Eclipse compiler: " + errOutputStream.getOut());
                 LogUtil.d(TAG, "Compiling Java files took " + (System.currentTimeMillis() - savedTimeMillis) + " ms");
+                logCompiler("Java compiler finished successfully in " + (System.currentTimeMillis() - savedTimeMillis) + " ms");
             } else {
                 LogUtil.e(TAG, "Failed to compile Java files");
+                logCompiler("Java compiler failed: " + errOutputStream.getOut());
                 throw new zy(errOutputStream.getOut());
             }
         }
+    }
+
+    private void verifyAndroidJarBeforeCompile() throws IOException {
+        File androidJar = new File(androidJarPath);
+        try (ZipFile zip = new ZipFile(androidJar)) {
+            if (zip.getEntry("android/app/Activity.class") == null || zip.getEntry("resources.arsc") == null) {
+                throw new IOException("android.jar does not contain the Android framework classes and resources AAPT2 requires");
+            }
+        } catch (IOException e) {
+            logCompiler("Invalid android.jar: " + e.getMessage());
+            throw new IOException("Unable to load Android include path " + androidJarPath
+                    + ". Cause: " + e.getMessage(), e);
+        }
+    }
+
+    public void logCompiler(String message) {
+        new mod.jbk.diagnostic.CompileErrorSaver(yq.sc_id).appendLog(message);
     }
 
     private void sanitizeJavaSourcesBeforeCompile() {
@@ -630,6 +669,100 @@ public class ProjectBuilder {
         JavaSourceCompatibilitySanitizer.sanitizeDirectory(new File(fpu.getPathJava(yq.sc_id)));
         JavaSourceCompatibilitySanitizer.sanitizeDirectory(new File(fpu.getPathBroadcast(yq.sc_id)));
         JavaSourceCompatibilitySanitizer.sanitizeDirectory(new File(fpu.getPathService(yq.sc_id)));
+    }
+    
+        /**
+     * Extracts and merges META-INF files (services, extensions, kotlin_module, etc.)
+     * from all library JARs, excluding signatures and MANIFEST.MF, and adds them to the APK.
+     */
+    private void extractAndMergeMetaInf(ApkBuilder apkBuilder) {
+        List<File> jarFiles = new ArrayList<>();
+
+        // 1. Built-in library JARs
+        for (Jp library : builtInLibraryManager.getLibraries()) {
+            File jar = BuiltInLibraries.getLibraryClassesJarPath(library.getName());
+            if (jar.exists()) {
+                jarFiles.add(jar);
+            }
+        }
+
+        // 2. Local library JARs
+        for (String jarPath : mll.getJarLocalLibrary().split(":")) {
+            if (!jarPath.trim().isEmpty()) {
+                File jar = new File(jarPath);
+                if (jar.exists()) {
+                    jarFiles.add(jar);
+                }
+            }
+        }
+
+        // Map to collect and merge contents based on entry relative path inside META-INF/
+        Map<String, ByteArrayOutputStream> metaInfEntries = new HashMap<>();
+
+        for (File jarFile : jarFiles) {
+            try (ZipInputStream zis = new ZipInputStream(new FileInputStream(jarFile))) {
+                ZipEntry entry;
+                while ((entry = zis.getNextEntry()) != null) {
+                    String name = entry.getName();
+
+                    // Process only files inside META-INF/
+                    if (name.startsWith("META-INF/") && !entry.isDirectory()) {
+                        String upperName = name.toUpperCase();
+
+                        // Exclude manifest and signature files
+                        if (upperName.equals("META-INF/MANIFEST.MF")
+                                || upperName.endsWith(".SF")
+                                || upperName.endsWith(".RSA")
+                                || upperName.endsWith(".DSA")) {
+                            continue;
+                        }
+
+                        ByteArrayOutputStream baos = metaInfEntries.get(name);
+                        if (baos == null) {
+                            baos = new ByteArrayOutputStream();
+                            metaInfEntries.put(name, baos);
+                        } else {
+                            // Ensure newline when merging service/meta files
+                            baos.write("\n".getBytes(StandardCharsets.UTF_8));
+                        }
+
+                        byte[] buffer = new byte[8192];
+                        int count;
+                        while ((count = zis.read(buffer)) != -1) {
+                            baos.write(buffer, 0, count);
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                LogUtil.e(TAG, "Failed to read META-INF entries from " + jarFile.getAbsolutePath(), e);
+            }
+        }
+
+        if (metaInfEntries.isEmpty()) return;
+
+        // Directory to write merged META-INF files before passing to ApkBuilder
+        File metaInfOutDir = new File(yq.binDirectoryPath, "merged_meta_inf");
+        FileUtil.deleteFile(metaInfOutDir.getAbsolutePath());
+        metaInfOutDir.mkdirs();
+
+        for (Map.Entry<String, ByteArrayOutputStream> entry : metaInfEntries.entrySet()) {
+            String entryPath = entry.getKey();
+            File targetFile = new File(metaInfOutDir, entryPath);
+            File parentDir = targetFile.getParentFile();
+            if (parentDir != null && !parentDir.exists()) {
+                parentDir.mkdirs();
+            }
+
+            try (FileOutputStream fos = new FileOutputStream(targetFile)) {
+                fos.write(entry.getValue().toByteArray());
+                // Add the file into the APK
+                apkBuilder.addFile(targetFile, entryPath);
+            } catch (DuplicateFileException e) {
+                LogUtil.w(TAG, "Duplicate META-INF entry ignored: " + entryPath);
+            } catch (Exception e) {
+                LogUtil.e(TAG, "Failed to add META-INF file to APK: " + entryPath, e);
+            }
+        }
     }
 
     public void buildApk() throws By {
@@ -673,6 +806,9 @@ public class ProjectBuilder {
                     dexNumber++;
                 }
             }
+            
+            /* Extract and merge META-INF files (services, kotlin_module, etc.) */
+            extractAndMergeMetaInf(apkBuilder);
 
             apkBuilder.setDebugMode(false);
             apkBuilder.sealApk();
