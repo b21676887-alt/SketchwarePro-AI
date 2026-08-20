@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/FabioSilva11/Sketchware-IA/releases">
+  <a href="https://github.com/b21676887-alt/SketchwarePro-AI/releases">
     <strong>تحميل ملف APK</strong>
   </a>
   ·
@@ -25,7 +25,7 @@
     <strong>خارطة الطريق</strong>
   </a>
   ·
-  <a href="https://github.com/FabioSilva11/Sketchware-IA/issues">
+  <a href="https://github.com/b21676887-alt/SketchwarePro-AI/issues">
     <strong>الإبلاغ عن خطأ</strong>
   </a>
 </p>
@@ -115,7 +115,7 @@ https://github.com/user-attachments/assets/651ff6f4-8d62-4327-a524-92030e795eb3
 
 قم بتحميل أحدث إصدار من صفحة الإصدارات (Releases):
 
-👉 "تحميل ملف APK" (https://github.com/FabioSilva11/Sketchware-IA/releases)
+👉 "تحميل ملف APK" (https://github.com/b21676887-alt/SketchwarePro-AI/releases)
 
 > "توصية: قم بتنزيل ملفات APK فقط من صفحة الإصدارات (Releases) الرسمية لهذا المستودع."
 
@@ -241,7 +241,7 @@ Sketchware-IA/
 
 استعرض المشكلات المفتوحة (Issues):
 
-👉 "قائمة المشكلات (Issues)" (https://github.com/FabioSilva11/Sketchware-IA/issues)
+👉 "قائمة المشكلات (Issues)" (https://github.com/b21676887-alt/SketchwarePro-AI/issues)
 
 المساهمات الأولى المناسبة يفضل تصنيفها باستخدام:
 
@@ -255,7 +255,7 @@ Sketchware-IA/
 
 2. قم بعمل النسخ المتفرع (Fork)
 
-git clone https://github.com/FabioSilva11/Sketchware-IA.git
+git clone https://github.com/b21676887-alt/SketchwarePro-AI.git
 cd Sketchware-IA
 
 3. أنشئ فرعًا جديدًا (Branch)
@@ -295,7 +295,7 @@ git checkout -b feat/my-feature-name
 
 التجميع محليًا (Local Compilation):
 
-git clone https://github.com/FabioSilva11/Sketchware-IA.git
+git clone https://github.com/b21676887-alt/SketchwarePro-AI.git
 cd Sketchware-IA
 ./gradlew assembleDebug
 
@@ -367,7 +367,7 @@ adicione_aqui_o_hash_do_apk
 > المشروع يدار بواسطة المجتمع ونبحث عن المساهمين في مجالات الأندرويد، Java، Kotlin، الذكاء الاصطناعي، UI/UX، والتوثيق.
 > 
 > رابط المستودع على GitHub:
-> https://github.com/FabioSilva11/Sketchware-IA
+> https://github.com/b21676887-alt/SketchwarePro-AI
 
 ---
 
@@ -406,11 +406,11 @@ adicione_aqui_o_hash_do_apk
 سواء كنت مطورًا، طالبًا، مصمماً، صانع محتوى، أو مهتمًا بالذكاء الاصطناعي، فإن مساهمتك ستساعد في جعل Sketchware IA أفضل للجميع.
 
 <p align="center">
-  <a href="https://github.com/FabioSilva11/Sketchware-IA/releases">تحميل APK</a>
+  <a href="https://github.com/b21676887-alt/SketchwarePro-AI/releases">تحميل APK</a>
   ·
-  <a href="https://github.com/FabioSilva11/Sketchware-IA/issues">الإبلاغ عن خطأ</a>
+  <a href="https://github.com/b21676887-alt/SketchwarePro-AI/issues">الإبلاغ عن خطأ</a>
   ·
-  <a href="https://github.com/FabioSilva11/Sketchware-IA/pulls">المساهمة</a>
+  <a href="https://github.com/b21676887-alt/SketchwarePro-AI/pulls">المساهمة</a>
 </p>
 
 <p align="center">
