@@ -91,13 +91,18 @@ jobs:
           java-version: 17
           distribution: temurin
 
-      - name: Set environmental variables
+      - name: Setup google-services.json
         shell: bash
         env:
-          JSON_CONTENT: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        if: ${{ env.JSON_CONTENT != '' }}
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: |
-          printf 'GOOGLE_SERVICES_JSON<<EOF\n%s\nEOF\n' "$JSON_CONTENT" >> $GITHUB_ENV
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            echo "$GOOGLE_SERVICES_JSON" > app/google-services.json
+            echo "Successfully generated app/google-services.json from secret."
+          else
+            echo '{"project_info":{"project_number":"000000000000","project_id":"dummy","storage_bucket":"dummy.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:000000000000:android:0000000000000000","android_client_info":{"package_name":"pro.sketchware"}},"oauth_client":[],"api_key":[{"current_key":"dummy"}],"services":{"appinvite_service":{"status":1}}}],"configuration_version":"1"}' > app/google-services.json
+            echo "Generated dummy app/google-services.json fallback."
+          fi
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
