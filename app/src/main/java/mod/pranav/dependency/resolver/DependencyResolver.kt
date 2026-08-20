@@ -1,9 +1,9 @@
 package mod.pranav.dependency.resolver
 
-import android.os.Environment
 import com.android.tools.r8.CompilationMode
 import com.android.tools.r8.D8
 import com.android.tools.r8.D8Command
+import com.android.tools.r8.GlobalSyntheticsConsumer
 import com.android.tools.r8.OutputMode
 import com.google.gson.Gson
 import kotlinx.coroutines.runBlocking
@@ -19,13 +19,19 @@ import org.cosmic.ide.dependency.resolver.getArtifact
 import org.cosmic.ide.dependency.resolver.repositories
 import pro.sketchware.utility.FileUtil
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.regex.Pattern
 import java.util.zip.ZipFile
+import java.util.zip.ZipInputStream
+import java.util.zip.ZipOutputStream
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
+import mod.hey.studios.project.ProjectSettings;
 
 class DependencyResolver(
     private val groupId: String,
@@ -48,13 +54,18 @@ class DependencyResolver(
           |    {"url": "https://repo.spring.io/libs-milestone", "name": "Spring Milestone"}
           |]
         """.trimMargin()
+
+        private val syntheticCounter = AtomicInteger(0)
+        private const val MAX_CHUNK_SIZE_BYTES = 9 * 1024 * 1024L
+        private const val MIN_CHUNK_SIZE_BYTES = 2 * 1024 * 1024L
+        private const val MAX_JAR_SIZE_BYTES = 12 * 1024 * 1024L
     }
 
     private val downloadPath: String =
         FileUtil.getExternalStorageDir() + "/.sketchware/libs/local_libs"
 
     private val repositoriesJson = Paths.get(
-        Environment.getExternalStorageDirectory().absolutePath,
+        FileUtil.getExternalStorageDir(),
         ".sketchware",
         "libs",
         "repositories.json"
@@ -62,7 +73,7 @@ class DependencyResolver(
 
     init {
         if (Files.notExists(repositoriesJson)) {
-            Files.createDirectories(repositoriesJson.parent)
+            repositoriesJson.parent?.let { Files.createDirectories(it) }
             repositoriesJson.writeText(DEFAULT_REPOS)
         }
         Gson().fromJson(repositoriesJson.readText(), Helper.TYPE_MAP_LIST).forEach {
@@ -152,7 +163,7 @@ class DependencyResolver(
             LibraryResourceSanitizer.sanitizeResourceDirectory(
                 Paths.get(downloadPath, "${dependency.artifactId}-v${dependency.version}", "res").toFile()
             )
-            Files.delete(mainArtifactPath)
+            Files.deleteIfExists(mainArtifactPath)
             val packageName = findPackageName(
                 Paths.get(downloadPath, "${dependency.artifactId}-v${dependency.version}")
                     .toAbsolutePath().toString(),
@@ -215,7 +226,7 @@ class DependencyResolver(
                     return@forEach
                 }
                 LibraryResourceSanitizer.sanitizeResourceDirectory(path.parent.resolve("res").toFile())
-                Files.delete(path)
+                Files.deleteIfExists(path)
                 val packageName =
                     findPackageName(path.parent.toAbsolutePath().toString(), dep.groupId)
                 path.parent.resolve("config").writeText(packageName)
@@ -274,7 +285,7 @@ class DependencyResolver(
         callback: DependencyResolverCallback
     ): Boolean {
         return try {
-            Files.createDirectories(path.parent)
+            path.parent?.let { Files.createDirectories(it) }
             artifact.downloadTo(path.toFile())
             if (Files.notExists(path) || Files.size(path) == 0L) {
                 throw IllegalStateException("Downloaded file is empty")
@@ -309,14 +320,19 @@ class DependencyResolver(
     }
 
     private fun unzip(path: Path) {
-        val zipFile = ZipFile(path.toFile())
-        zipFile.use { zip ->
+        val targetDir = path.parent.normalize()
+        ZipFile(path.toFile()).use { zip ->
             zip.entries().asSequence().forEach { entry ->
-                val entryDestination = path.parent.resolve(entry.name)
+                val entryDestination = targetDir.resolve(entry.name).normalize()
+
+                if (!entryDestination.startsWith(targetDir)) {
+                    throw SecurityException("Bad zip entry path: ${entry.name}")
+                }
+
                 if (entry.isDirectory) {
                     Files.createDirectories(entryDestination)
                 } else {
-                    Files.createDirectories(entryDestination.parent)
+                    entryDestination.parent?.let { Files.createDirectories(it) }
                     zip.getInputStream(entry).use { input ->
                         Files.newOutputStream(entryDestination).use { output ->
                             input.copyTo(output)
@@ -327,12 +343,186 @@ class DependencyResolver(
         }
     }
 
+    private fun splitJarFile(jarFile: File): List<File> {
+        val splitJars = mutableListOf<File>()
+        if (!jarFile.exists()) return splitJars
+        if (jarFile.length() <= MAX_JAR_SIZE_BYTES) {
+            splitJars.add(jarFile)
+            return splitJars
+        }
+
+        val classEntries = mutableListOf<Pair<String, ByteArray>>()
+        val resourceEntries = mutableListOf<Pair<String, ByteArray>>()
+        val addedClassNames = mutableSetOf<String>()
+
+        ZipInputStream(FileInputStream(jarFile)).use { zis ->
+            var entry = zis.nextEntry
+            while (entry != null) {
+                if (!entry.isDirectory) {
+                    val bytes = zis.readBytes()
+                    if (entry.name.endsWith(".class")) {
+                        if (addedClassNames.add(entry.name)) {
+                            classEntries.add(entry.name to bytes)
+                        }
+                    } else {
+                        resourceEntries.add(entry.name to bytes)
+                    }
+                }
+                entry = zis.nextEntry
+            }
+        }
+
+        val chunks = mutableListOf<MutableList<Pair<String, ByteArray>>>()
+        var currentChunk = mutableListOf<Pair<String, ByteArray>>()
+        var currentChunkSize = 0L
+
+        for (item in classEntries) {
+            val itemSize = item.second.size.toLong()
+            if (currentChunk.isNotEmpty() && (currentChunkSize + itemSize > MAX_CHUNK_SIZE_BYTES)) {
+                chunks.add(currentChunk)
+                currentChunk = mutableListOf()
+                currentChunkSize = 0L
+            }
+            currentChunk.add(item)
+            currentChunkSize += itemSize
+        }
+        if (currentChunk.isNotEmpty()) {
+            chunks.add(currentChunk)
+        }
+
+        if (chunks.size > 1) {
+            val lastChunk = chunks.last()
+            val lastChunkTotalBytes = lastChunk.sumOf { it.second.size.toLong() }
+
+            if (lastChunkTotalBytes <= MIN_CHUNK_SIZE_BYTES) {
+                val previousChunk = chunks[chunks.size - 2]
+                previousChunk.addAll(lastChunk)
+                chunks.removeAt(chunks.size - 1)
+            }
+        }
+
+        chunks.forEachIndexed { index, chunkClasses ->
+            val partIndex = index + 1
+            val chunkFile = File(jarFile.parentFile, "split_${partIndex}_${jarFile.name}")
+
+            ZipOutputStream(FileOutputStream(chunkFile)).use { zos ->
+                for ((name, bytes) in chunkClasses) {
+                    zos.putNextEntry(java.util.zip.ZipEntry(name))
+                    zos.write(bytes)
+                    zos.closeEntry()
+                }
+
+                if (partIndex == 1) {
+                    for ((name, bytes) in resourceEntries) {
+                        zos.putNextEntry(java.util.zip.ZipEntry(name))
+                        zos.write(bytes)
+                        zos.closeEntry()
+                    }
+                }
+            }
+            splitJars.add(chunkFile)
+        }
+
+        return if (splitJars.isEmpty()) listOf(jarFile) else splitJars
+    }
+
+    private fun createGlobalSyntheticsConsumer(outputDir: File): GlobalSyntheticsConsumer {
+        return GlobalSyntheticsConsumer { provider, _, _ ->
+            try {
+                val bytes = provider.buffer
+                if (bytes != null && bytes.isNotEmpty()) {
+                    val synthFile = File(outputDir, "synthetic_${syntheticCounter.incrementAndGet()}.dex")
+                    FileOutputStream(synthFile).use { fos ->
+                        fos.write(bytes, provider.offset, provider.length)
+                    }
+                }
+            } catch (_: Exception) {
+            }
+        }
+    }
+
+    private fun cleanupSyntheticFiles(targetDir: File) {
+        runCatching {
+            targetDir.listFiles()?.forEach { file ->
+                if (file.isFile && (file.name.startsWith("synthetic_") || file.name.endsWith(".synthetic"))) {
+                    file.delete()
+                }
+            }
+        }
+    }
+
     private fun compileJar(jarFile: Path, jars: List<Path>, libraryJars: List<Path>) {
-        Files.createDirectories(jarFile.parent)
-        D8.run(
-            D8Command.builder().setIntermediate(true).setMode(CompilationMode.RELEASE)
-                .addProgramFiles(jarFile).addLibraryFiles(libraryJars).addClasspathFiles(jars)
-                .setOutput(jarFile.parent, OutputMode.DexIndexed).build()
-        )
+        jarFile.parent?.let { Files.createDirectories(it) }
+        val minApi = buildSettings.getValue(ProjectSettings.SETTING_MINIMUM_SDK_VERSION, "21").toIntOrNull() ?: 21
+        val targetDir = jarFile.parent.toFile()
+
+        val jarChunks = splitJarFile(jarFile.toFile()).map { it.toPath() }
+        val syntheticsConsumer = createGlobalSyntheticsConsumer(targetDir)
+
+        val isChunked = jarChunks.size > 1
+
+        try {
+            if (isChunked) {
+                val tempDexFiles = mutableListOf<File>()
+
+                jarChunks.forEachIndexed { index, chunk ->
+                    val tempChunkDir = File(targetDir, "temp_dex_$index")
+                    tempChunkDir.mkdirs()
+
+                    val otherChunksAsClasspath = jarChunks.filter { it != chunk }
+                    val combinedClasspath = (jars + otherChunksAsClasspath).distinct()
+
+                    val builder = D8Command.builder()
+                        .setIntermediate(true)
+                        .setMode(CompilationMode.RELEASE)
+                        .setMinApiLevel(minApi)
+                        .addProgramFiles(chunk)
+                        .addLibraryFiles(libraryJars)
+                        .addClasspathFiles(combinedClasspath)
+                        .setGlobalSyntheticsConsumer(syntheticsConsumer)
+                        .setOutput(tempChunkDir.toPath(), OutputMode.DexIndexed)
+
+                    D8.run(builder.build())
+
+                    tempChunkDir.listFiles { _, name -> name.endsWith(".dex") }?.let { dexes ->
+                        dexes.sortBy { it.name }
+                        tempDexFiles.addAll(dexes)
+                    }
+                }
+
+                tempDexFiles.forEachIndexed { index, dexFile ->
+                    val newName = if (index == 0) "classes.dex" else "classes${index + 1}.dex"
+                    val destFile = File(targetDir, newName)
+                    if (destFile.exists()) destFile.delete()
+                    dexFile.renameTo(destFile)
+                }
+
+                for (i in jarChunks.indices) {
+                    File(targetDir, "temp_dex_$i").deleteRecursively()
+                }
+
+            } else {
+                val chunk = jarChunks.first()
+                val builder = D8Command.builder()
+                    .setIntermediate(true)
+                    .setMode(CompilationMode.RELEASE)
+                    .setMinApiLevel(minApi)
+                    .addProgramFiles(chunk)
+                    .addLibraryFiles(libraryJars)
+                    .addClasspathFiles(jars)
+                    .setGlobalSyntheticsConsumer(syntheticsConsumer)
+                    .setOutput(jarFile.parent, OutputMode.DexIndexed)
+
+                D8.run(builder.build())
+            }
+        } finally {
+            jarChunks.forEach { chunk ->
+                if (chunk != jarFile && Files.exists(chunk)) {
+                    runCatching { Files.delete(chunk) }
+                }
+            }
+            cleanupSyntheticFiles(targetDir)
+            System.gc()
+        }
     }
 }
