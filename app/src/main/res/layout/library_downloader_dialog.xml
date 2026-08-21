@@ -33,8 +33,29 @@
             android:id="@+id/dependency_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
+            android:imeOptions="actionNext"
             android:singleLine="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- حقل إدخال minApi الجديد -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/min_api_input_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="12dp"
+        android:hint="Minimum SDK API (minApi)"
+        android:importantForAutofill="noExcludeDescendants">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/min_api_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
+            android:text="21" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
