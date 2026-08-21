@@ -27,17 +27,35 @@
         app:liftOnScrollColor="@android:color/transparent"
         app:statusBarForeground="?attr/colorSurface">
 
-        <com.google.android.material.search.SearchBar
-            android:id="@+id/search_bar"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:hint="Search for libraries"
-            app:defaultMarginsEnabled="false"
-            app:navigationIcon="?attr/homeAsUpIndicator" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp">
+
+            <com.google.android.material.search.SearchBar
+                android:id="@+id/search_bar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Search for libraries"
+                app:defaultMarginsEnabled="false"
+                app:navigationIcon="?attr/homeAsUpIndicator" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_more_options"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:contentDescription="Options"
+                app:icon="@drawable/ic_more_vert_white_24dp" />
+
+        </LinearLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
 
