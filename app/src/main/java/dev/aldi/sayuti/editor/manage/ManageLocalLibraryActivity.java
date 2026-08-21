@@ -162,8 +162,7 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
             }
         });
 
-        // إعداد ضغطة زر قائمة الخيارات
-        binding.btnMoreOptions.setOnClickListener(v -> showOptionsMenu(v));
+        binding.btnMoreOptions.setOnClickListener(this::showOptionsMenu);
 
         binding.contextualToolbar.setNavigationOnClickListener(v -> hideContextualToolbarAndClearSelection());
         binding.contextualToolbar.setOnMenuItemClickListener(item -> {
@@ -240,8 +239,7 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
 
     private void showOptionsMenu(View anchorView) {
         androidx.appcompat.widget.PopupMenu popupMenu = new androidx.appcompat.widget.PopupMenu(this, anchorView);
-        
-        // إضافة العناصر إلى القائمة برمجياً (أو باستخدام R.menu.your_menu)
+
         popupMenu.getMenu().add(0, 1, 0, "إعادة تحميل المكتبات");
         popupMenu.getMenu().add(0, 2, 1, "تحديد الكل");
 
@@ -353,6 +351,7 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
             }
         } else {
             boolean alreadyExists = false;
+            String dependency = null;
             for (Map<String, Object> libraryMap : projectUsedLibs) {
                 if (name.equals(libraryMap.get("name").toString())) {
                     alreadyExists = true;
@@ -360,7 +359,7 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
                 }
             }
             if (!alreadyExists) {
-                HashMap<String, Object> localLibrary = createLibraryMap(name, library.getDependency());
+                HashMap<String, Object> localLibrary = createLibraryMap(name, dependency);
                 projectUsedLibs.add(localLibrary);
             }
         }
@@ -442,9 +441,7 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
             binding.materialSwitch.setChecked(isUsedLibrary(library.getName()));
             if (!notAssociatedWithProject) {
                 binding.materialSwitch.setEnabled(true);
-                binding.materialSwitch.setOnClickListener(v -> {
-                    updateLibraryUsage(library, binding.materialSwitch.isChecked());
-                });
+                binding.materialSwitch.setOnClickListener(v -> updateLibraryUsage(library, binding.materialSwitch.isChecked()));
             } else {
                 binding.materialSwitch.setEnabled(false);
             }
