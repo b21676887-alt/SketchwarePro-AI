@@ -8,6 +8,7 @@ import com.android.tools.r8.OutputMode
 import com.google.gson.Gson
 import kotlinx.coroutines.runBlocking
 import mod.hey.studios.build.BuildSettings
+import mod.hey.studios.project.ProjectSettings
 import mod.hey.studios.util.Helper
 import mod.jbk.build.BuiltInLibraries
 import mod.jbk.build.compiler.resource.LibraryResourceSanitizer
@@ -31,14 +32,14 @@ import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
-import mod.hey.studios.project.ProjectSettings;
 
-class DependencyResolver(
+class DependencyResolver @JvmOverloads constructor(
     private val groupId: String,
     private val artifactId: String,
     private val version: String,
     private val skipDependencies: Boolean,
-    private val buildSettings: BuildSettings
+    private val buildSettings: BuildSettings,
+    private val minApi: Int = buildSettings.getValue(ProjectSettings.SETTING_MINIMUM_SDK_VERSION, "21").toIntOrNull() ?: 21
 ) {
     companion object {
         private val DEFAULT_REPOS = """
@@ -453,7 +454,6 @@ class DependencyResolver(
 
     private fun compileJar(jarFile: Path, jars: List<Path>, libraryJars: List<Path>) {
         jarFile.parent?.let { Files.createDirectories(it) }
-        val minApi = buildSettings.getValue(ProjectSettings.SETTING_MINIMUM_SDK_VERSION, "21").toIntOrNull() ?: 21
         val targetDir = jarFile.parent.toFile()
 
         val jarChunks = splitJarFile(jarFile.toFile()).map { it.toPath() }
