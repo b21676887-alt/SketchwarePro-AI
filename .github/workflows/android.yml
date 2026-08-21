@@ -23,7 +23,7 @@ jobs:
     permissions:
       actions: write
     steps:
-      - name: Delete old artifacts (keep only 3 most recent)
+      - name: Delete old artifacts (keep only 5 most recent)
         uses: actions/github-script@v7
         with:
           script: |
@@ -37,10 +37,10 @@ jobs:
               new Date(b.created_at) - new Date(a.created_at)
             );
 
-            const toDelete = artifacts.artifacts.slice(3);
+            const toDelete = artifacts.artifacts.slice(5);
 
             console.log(`Total artifacts: ${artifacts.artifacts.length}`);
-            console.log(`Keeping: ${Math.min(artifacts.artifacts.length, 3)}`);
+            console.log(`Keeping: ${Math.min(artifacts.artifacts.length, 5)}`);
             console.log(`Deleting: ${toDelete.length}`);
 
             for (const artifact of toDelete) {
@@ -171,7 +171,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Delete old releases (keep only 3 most recent)
+      - name: Delete old releases (keep only 5 most recent)
         uses: actions/github-script@v7
         with:
           script: |
@@ -185,10 +185,10 @@ jobs:
               new Date(b.created_at) - new Date(a.created_at)
             );
 
-            const toDelete = releases.slice(3);
+            const toDelete = releases.slice(5);
 
             console.log(`Total releases: ${releases.length}`);
-            console.log(`Keeping: ${Math.min(releases.length, 3)}`);
+            console.log(`Keeping: ${Math.min(releases.length, 5)}`);
             console.log(`Deleting: ${toDelete.length}`);
 
             for (const release of toDelete) {
