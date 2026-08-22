@@ -28,6 +28,8 @@
   <a href="https://github.com/b21676887-alt/SketchwarePro-AI/issues">
     <strong>الإبلاغ عن خطأ</strong>
   </a>
+  .
+  <a href="https://aistudio.google.com/apps">Start building</a>
 </p>
 
 <p align="center">
