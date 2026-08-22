@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Strings for ManageLocalLibraryActivity -->
+    <string name="manage_libs_reload">إعادة تحميل المكتبات</string>
+    <string name="manage_libs_select_all">تحديد الكل</string>
+    <string name="manage_libs_manage_repos">إدارة المستودعات</string>
+
+    <string name="warning_title">تحذير</string>
+    <string name="warning_remove_used_library_message">المكتبة "%1$s" مستخدمة بالفعل في مشروعك، إزالتها قد يكسر المشروع.
+هل تريد المتابعة؟</string>
+
+    <string name="deleted_successfully">تم الحذف بنجاح</string>
+</resources>
