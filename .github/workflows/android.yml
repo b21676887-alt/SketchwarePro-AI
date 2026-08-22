@@ -92,9 +92,7 @@ jobs:
           fi
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Prepare keystore (if provided)
+            - name: Prepare keystore (if provided)
         if: secrets.KEYSTORE_BASE64 != ''
         shell: bash
         env:
@@ -107,14 +105,8 @@ jobs:
           echo "Decoding keystore and writing keystore.properties..."
           echo "$KEYSTORE_BASE64" | base64 --decode > ./keystore.jks
           chmod 600 ./keystore.jks
-          cat > ./keystore.properties <<EOF
-storeFile=keystore.jks
-storePassword=${STORE_PASSWORD}
-keyAlias=${KEY_ALIAS}
-keyPassword=${KEY_PASSWORD}
-EOF
+          printf 'storeFile=keystore.jks\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' "${STORE_PASSWORD}" "${KEY_ALIAS}" "${KEY_PASSWORD}" > ./keystore.properties
           echo "Keystore prepared. (contents suppressed)"
-
       - name: Build Release APK
         env:
           SKETCHUB_API_KEY: ${{ secrets.SKETCHUB_API_KEY }}
