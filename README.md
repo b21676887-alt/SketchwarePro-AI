@@ -28,14 +28,12 @@
   <a href="https://github.com/b21676887-alt/SketchwarePro-AI/issues">
     <strong>الإبلاغ عن خطأ</strong>
   </a>
-  .
-  <a href="https://aistudio.google.com/apps">Start building</a>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/github/stars/FabioSilva11/Sketchware-IA?style=social" alt="GitHub Stars">
-  <img src="https://img.shields.io/github/forks/FabioSilva11/Sketchware-IA?style=social" alt="GitHub Forks">
-  <img src="https://img.shields.io/github/v/release/FabioSilva11/Sketchware-IA?include_prereleases" alt="Latest Release">
+  <img src="https://img.shields.io/github/stars/b21676887-alt/SketchwarePro-AI?style=social" alt="GitHub Stars">
+  <img src="https://img.shields.io/github/forks/b21676887-alt/SketchwarePro-AI?style=social" alt="GitHub Forks">
+  <img src="https://img.shields.io/github/v/release/b21676887-alt/SketchwarePro-AI?include_prereleases" alt="Latest Release">
   <img src="https://img.shields.io/badge/platform-Android-green" alt="Android">
   <img src="https://img.shields.io/badge/language-Java%20%2F%20Kotlin-blue" alt="Java Kotlin">
   <img src="https://img.shields.io/badge/license-source--available-orange" alt="Source Available">
