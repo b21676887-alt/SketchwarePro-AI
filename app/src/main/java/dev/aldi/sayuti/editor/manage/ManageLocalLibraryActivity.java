@@ -54,6 +54,7 @@ import pro.sketchware.databinding.ManageLocallibrariesBinding;
 import pro.sketchware.databinding.ViewItemLocalLibBinding;
 import pro.sketchware.databinding.ViewItemLocalLibSearchBinding;
 import pro.sketchware.utility.SketchwareUtil;
+import pro.sketchware.utility.FileUtil;
 
 public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
     private final LibraryAdapter adapter = new LibraryAdapter();
