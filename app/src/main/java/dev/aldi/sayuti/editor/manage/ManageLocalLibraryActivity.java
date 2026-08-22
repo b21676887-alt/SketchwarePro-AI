@@ -70,7 +70,7 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
 
     private Runnable repoDialogRefresh;
     
-    private static final String REPOSITORIES_JSON_PATH = getExternalStorageDir().concat("/.sketchware/libs/repositories.json");
+    private static final String REPOSITORIES_JSON_PATH = FileUtil.getExternalStorageDir().concat("/.sketchware/libs/repositories.json");
 
     private static final String[] BUILTIN_REPOS = {
             "Maven Central", "Google Maven Official", "JitPack", "Sonatype", "Google R8 Direct Releases"
