@@ -27,19 +27,20 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            // Use pagination to fetch all artifacts (handles >100 artifacts)
-            const artifacts = await github.paginate(github.rest.actions.listArtifactsForRepo, {
+            const { data: artifacts } = await github.rest.actions.listArtifactsForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
               per_page: 100
             });
 
-            artifacts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            artifacts.artifacts.sort((a, b) =>
+              new Date(b.created_at) - new Date(a.created_at)
+            );
 
-            const toDelete = artifacts.slice(5);
+            const toDelete = artifacts.artifacts.slice(5);
 
-            console.log(`Total artifacts: ${artifacts.length}`);
-            console.log(`Keeping: ${Math.min(artifacts.length, 5)}`);
+            console.log(`Total artifacts: ${artifacts.artifacts.length}`);
+            console.log(`Keeping: ${Math.min(artifacts.artifacts.length, 5)}`);
             console.log(`Deleting: ${toDelete.length}`);
 
             for (const artifact of toDelete) {
@@ -65,81 +66,42 @@ jobs:
           java-version: 17
           distribution: temurin
 
-      - name: Cache Gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       - name: Setup google-services.json
         shell: bash
         env:
           GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: |
-          set -euo pipefail
-          if [ -n "${GOOGLE_SERVICES_JSON:-}" ]; then
-            printf '%s' "$GOOGLE_SERVICES_JSON" > app/google-services.json
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            echo "$GOOGLE_SERVICES_JSON" > app/google-services.json
             echo "Successfully generated app/google-services.json from secret."
           else
-            cat > app/google-services.json <<'EOF'
-            {"project_info":{"project_number":"000000000000","project_id":"dummy","storage_bucket":"dummy.appspot.com"},"client":[]}
-            EOF
+            echo '{"project_info":{"project_number":"000000000000","project_id":"dummy","storage_bucket":"dummy.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:000000000000:android:0000000000000000","android_client_info":{"package_name":"pro.sketchware"}},"oauth_client":[],"api_key":[{"current_key":"dummy"}],"services":{"appinvite_service":{"status":1}}}],"configuration_version":"1"}' > app/google-services.json
             echo "Generated dummy app/google-services.json fallback."
           fi
 
       - name: Setup Gradle
-            - name: Prepare keystore (if provided)
-        if: secrets.KEYSTORE_BASE64 != ''
-        shell: bash
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: |
-          set -euo pipefail
-          echo "Decoding keystore and writing keystore.properties..."
-          echo "$KEYSTORE_BASE64" | base64 --decode > ./keystore.jks
-          chmod 600 ./keystore.jks
-          printf 'storeFile=keystore.jks\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' "${STORE_PASSWORD}" "${KEY_ALIAS}" "${KEY_PASSWORD}" > ./keystore.properties
-          echo "Keystore prepared. (contents suppressed)"
+        uses: gradle/actions/setup-gradle@v3
+
       - name: Build Release APK
         env:
           SKETCHUB_API_KEY: ${{ secrets.SKETCHUB_API_KEY }}
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx5g -Dfile.encoding=UTF-8 -XX:+UseParallelGC
         run: |
-          set -euo pipefail
           chmod +x ./gradlew
-          echo "Starting Gradle assembleRelease..."
           ./gradlew --no-daemon --max-workers=1 assembleRelease
 
       - name: Set short SHA
         id: set_sha
         run: echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
-      - name: Rename APK with commit hash (if present)
-        shell: bash
+      - name: Rename APK with commit hash
         run: |
-          set -euo pipefail
-          APK_SRC="app/build/outputs/apk/release/app-release.apk"
-          SHORT_SHA=${{ steps.set_sha.outputs.short_sha }}
-          APK_DST="app/build/outputs/apk/release/app-release-${SHORT_SHA}.apk"
-
-          if [ -f "$APK_SRC" ]; then
-            mv "$APK_SRC" "$APK_DST"
-            echo "Renamed APK to $APK_DST"
-          else
-            echo "ERROR: APK not found at $APK_SRC"
-            ls -la app/build/outputs/apk || true
-            exit 1
-          fi
+          mv app/build/outputs/apk/release/app-release.apk \
+             app/build/outputs/apk/release/app-release-${{ steps.set_sha.outputs.short_sha }}.apk
 
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
@@ -165,14 +127,14 @@ jobs:
         id: release_meta
         shell: bash
         run: |
-          set -euo pipefail
           release_tag="main-build-${{ github.run_id }}-${{ github.run_attempt }}-${{ needs.build.outputs.short_sha }}"
           asset_name="Sketchware-IA-main-${{ needs.build.outputs.short_sha }}-run${{ github.run_number }}.apk"
 
           echo "release_tag=${release_tag}" >> "$GITHUB_OUTPUT"
           echo "asset_name=${asset_name}" >> "$GITHUB_OUTPUT"
 
-          cp ./release-assets/app-release-${{ needs.build.outputs.short_sha }}.apk "./release-assets/${asset_name}"
+          cp ./release-assets/app-release-${{ needs.build.outputs.short_sha }}.apk \
+             "./release-assets/${asset_name}"
 
       - name: Write release notes
         shell: bash
@@ -188,36 +150,18 @@ jobs:
           This prerelease was generated automatically from the latest successful CI build for this run on \`main\`.
           EOF
 
-      - name: Read release notes into output
-        id: read_notes
+      - name: Create release for this build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
-          echo "body<<EOF" >> $GITHUB_OUTPUT
-          cat release-notes.md >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.release_meta.outputs.release_tag }}
-          release_name: "Development Build #${{ github.run_number }} (${{ needs.build.outputs.short_sha }})"
-          body: ${{ steps.read_notes.outputs.body }}
-          draft: false
-          prerelease: true
-          target_commitish: ${{ github.sha }}
-
-      - name: Upload release asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release-assets/${{ steps.release_meta.outputs.asset_name }}
-          asset_name: ${{ steps.release_meta.outputs.asset_name }}
-          asset_content_type: application/vnd.android.package-archive
+          gh release create "${{ steps.release_meta.outputs.release_tag }}" \
+            -R "${GITHUB_REPOSITORY}" \
+            "./release-assets/${{ steps.release_meta.outputs.asset_name }}" \
+            --title "Development Build #${{ github.run_number }} (${{ needs.build.outputs.short_sha }})" \
+            --notes-file release-notes.md \
+            --latest \
+            --target "${GITHUB_SHA}"
 
   cleanupReleases:
     name: Clean up old releases
@@ -231,14 +175,15 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            // Use pagination to fetch all releases (handles >100 releases)
-            const releases = await github.paginate(github.rest.repos.listReleases, {
+            const { data: releases } = await github.rest.repos.listReleases({
               owner: context.repo.owner,
               repo: context.repo.repo,
               per_page: 100
             });
 
-            releases.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            releases.sort((a, b) =>
+              new Date(b.created_at) - new Date(a.created_at)
+            );
 
             const toDelete = releases.slice(5);
 
@@ -248,24 +193,11 @@ jobs:
 
             for (const release of toDelete) {
               console.log(`Deleting release: ${release.tag_name} (created: ${release.created_at})`);
-              // Delete release object and then delete the git tag if present
               await github.rest.repos.deleteRelease({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 release_id: release.id
               });
-
-              if (release.tag_name) {
-                try {
-                  await github.rest.git.deleteRef({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    ref: `tags/${release.tag_name}`
-                  });
-                } catch (err) {
-                  console.log(`Failed to delete tag tags/${release.tag_name}: ${err}`);
-                }
-              }
             }
 
   updateAppData:
@@ -283,7 +215,6 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          python -m pip install --upgrade pip
           pip install requests
 
       - name: Run Update App Script
@@ -293,17 +224,10 @@ jobs:
         env:
           GH_ABOUT_APP_WORKFLOW_TOKEN: ${{ secrets.GH_ABOUT_APP_WORKFLOW_TOKEN }}
         run: |
-          set -euo pipefail
-          git remote set-url origin https://${GH_ABOUT_APP_WORKFLOW_TOKEN}@github.com/${{ github.repository }}.git
-          git fetch origin
-          git checkout host || git checkout -b host origin/host
+          git checkout host
           git config --global user.name "Sketchware Pro Actions"
           git config --global user.email "hello@sketchware.pro"
-          git add about.json || true
-          if git diff --staged --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
+          git add about.json
           git commit -m "feat: Update app about screen data"
-          git push origin host
+          git push
         continue-on-error: true
