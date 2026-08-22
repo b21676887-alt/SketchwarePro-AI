@@ -3030,4 +3030,20 @@ Please try again later"</string>
     <string name="store_whats_new">What\'s new</string>
     <string name="export_project_title_export_aab">Export AAB (Android App Bundle)</string>
     <string name="export_project_button_export_aab">Export AAB</string>
+    <string name="menu_manage_repositories">Manage Maven repositories</string>
+    <string name="dialog_repo_title">Maven Repositories</string>
+    <string name="dialog_repo_add_title">Add Repository</string>
+    <string name="dialog_repo_edit_title">Edit Repository</string>
+    <string name="dialog_repo_name_hint">Name</string>
+    <string name="dialog_repo_url_hint">URL</string>
+    <string name="dialog_repo_name_placeholder">e.g. RuStore</string>
+    <string name="dialog_repo_url_placeholder">e.g. https://artifactory-external.vkpartner.ru/artifactory/maven</string>
+    <string name="dialog_repo_builtin">Built-in</string>
+    <string name="dialog_repo_custom">Custom</string>
+    <string name="dialog_repo_empty">No custom repositories. Tap + to add one.</string>
+    <string name="dialog_repo_delete_confirm">Delete repository \"%s\"?</string>
+    <string name="dialog_repo_error_name_required">Name is required</string>
+    <string name="dialog_repo_error_url_required">URL is required</string>
+    <string name="dialog_repo_error_url_invalid">URL must start with http:// or https://</string>
+    <string name="menu_clean_orphan_libs">Clean up orphaned libraries</string>
 </resources>
