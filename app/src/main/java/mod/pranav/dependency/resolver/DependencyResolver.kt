@@ -291,6 +291,16 @@ class DependencyResolver @JvmOverloads constructor(
             if (Files.notExists(path) || Files.size(path) == 0L) {
                 throw IllegalStateException("Downloaded file is empty")
             }
+
+            // Save a file named "dependency" in the downloaded artifact folder
+            // containing the coordinates in the format groupId:artifactId:version
+            try {
+                val depFile = path.parent.resolve("dependency")
+                depFile.writeText("${artifact.groupId}:${artifact.artifactId}:${artifact.version}")
+            } catch (_: Exception) {
+                // Ignore write failures to not break download flow
+            }
+
             true
         } catch (e: Throwable) {
             Files.deleteIfExists(path)
