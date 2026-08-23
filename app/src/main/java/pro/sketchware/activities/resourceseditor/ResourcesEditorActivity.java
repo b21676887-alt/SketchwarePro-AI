@@ -50,7 +50,6 @@ import pro.sketchware.utility.FileUtil;
 import pro.sketchware.utility.PropertiesUtil;
 import pro.sketchware.utility.SketchwareUtil;
 import pro.sketchware.utility.UI;
-import pro.sketchware.utility.TranslationFunction;
 
 public class ResourcesEditorActivity extends BaseAppCompatActivity {
 
@@ -58,7 +57,7 @@ public class ResourcesEditorActivity extends BaseAppCompatActivity {
     public yq yq;
     public boolean isComingFromSrcCodeEditor;
     public String sc_id;
-    public String variant;
+    public String variant = "";
     public String stringsFilePath;
     public String colorsFilePath;
     public String stylesFilePath;
@@ -123,8 +122,8 @@ public class ResourcesEditorActivity extends BaseAppCompatActivity {
     }
 
     private void initializeBackgroundTask(String variant) {
-        this.variant = variant;
-        String baseDir = String.format("%s/files/resource/values%s/", wq.b(sc_id), variant);
+        this.variant = variant != null ? variant : "";
+        String baseDir = String.format("%s/files/resource/values%s/", wq.b(sc_id), this.variant);
         stringsFilePath = baseDir + "strings.xml";
         colorsFilePath = baseDir + "colors.xml";
         stylesFilePath = baseDir + "styles.xml";
@@ -133,6 +132,9 @@ public class ResourcesEditorActivity extends BaseAppCompatActivity {
 
         setupViewPager();
         startBackgroundTask();
+        
+        // إجبار النظام على إعادة رسم قائمة الخيارات للتأكد من تحديث ظهور الخيارات المعتمدة على الـ variant
+        invalidateOptionsMenu();
     }
 
     private void setupListeners() {
@@ -337,9 +339,11 @@ public class ResourcesEditorActivity extends BaseAppCompatActivity {
                 }
             });
         }
+        
         MenuItem getFromVariantItem = menu.findItem(R.id.action_get_from_variant);
         if (getFromVariantItem != null) {
-            getFromVariantItem.setVisible(!variant.isEmpty());
+            // يظهر الخيار فقط إذا كان المستخدم داخل Variant فرعي وليس المجلد الافتراضي
+            getFromVariantItem.setVisible(variant != null && !variant.isEmpty());
         }
 
         return true;
