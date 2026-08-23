@@ -203,7 +203,17 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
                     synchronized (projectUsedLibs) {
                         projectUsedLibsCopy = new ArrayList<>(projectUsedLibs);
                     }
-                    deleteSelectedLocalLibraries(scId, adapter.getLocalLibraries(), projectUsedLibsCopy);
+
+                    // Convert selected adapter LocalLibrary items into ArrayList<HashMap<String,Object>>
+                    ArrayList<HashMap<String, Object>> adapterLibMaps = new ArrayList<>();
+                    for (LocalLibrary lib : adapter.getLocalLibraries()) {
+                        if (lib.isSelected()) {
+                            // createLibraryMap(name, dependency) produces the expected map shape
+                            adapterLibMaps.add(createLibraryMap(lib.getName(), null));
+                        }
+                    }
+
+                    deleteSelectedLocalLibraries(scId, adapterLibMaps, projectUsedLibsCopy);
                     runOnUiThread(() -> {
                         h();
                         SketchwareUtil.toast(getString(R.string.deleted_successfully));
@@ -267,7 +277,7 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         try {
             if (backgroundExecutor != null && !backgroundExecutor.isShutdown()) {
@@ -281,7 +291,7 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
     private void showOptionsMenu(View anchorView) {
         androidx.appcompat.widget.PopupMenu popupMenu = new androidx.appcompat.widget.PopupMenu(this, anchorView);
 
-        popupMenu.getMenu().add(0, 1, 0, getString(R.string.manage_libs_reload)); popupMenu.getMenu().add(0, 2, 1, getString(R.string.manage_libs_select_all)); popupMenu.getMenu().add(0, 3, 2, getString(R.string.manage_libs_manage_repos));
+        popupMenu.getMenu().add(0, 1, 0, getString(R.string.manage_libs_reload)); popupMenu.getMenu().add(0, 2, 1, getString(R.string.manage_libs_select_all)); popupMenu.getMenu().add(0, 3, 2, ge[...]);
 
         popupMenu.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
@@ -839,4 +849,4 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
             }
         }
     }
-    }
+}
