@@ -39,10 +39,12 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import a.a.a.MA;
@@ -59,17 +61,20 @@ import pro.sketchware.utility.FileUtil;
 public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
     private final LibraryAdapter adapter = new LibraryAdapter();
     private final SearchAdapter searchAdapter = new SearchAdapter();
-    private ArrayList<HashMap<String, Object>> projectUsedLibs = new ArrayList<>();
+    private List<HashMap<String, Object>> projectUsedLibs = new ArrayList<>();
     private boolean notAssociatedWithProject;
     private boolean searchBarExpanded;
     private BuildSettings buildSettings;
     private ManageLocallibrariesBinding binding;
     private String scId;
 
+    // Executor reused for background tasks
+    private final ExecutorService backgroundExecutor = Executors.newSingleThreadExecutor();
+
     // ==================== Repository Management ====================
 
     private Runnable repoDialogRefresh;
-    
+
     private static final String REPOSITORIES_JSON_PATH = FileUtil.getExternalStorageDir().concat("/.sketchware/libs/repositories.json");
 
     private static final String[] BUILTIN_REPOS = {
@@ -192,11 +197,16 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
                 return true;
             } else if (id == R.id.action_delete_selected_local_libraries) {
                 k();
-                Executors.newSingleThreadExecutor().execute(() -> {
-                    deleteSelectedLocalLibraries(scId, adapter.getLocalLibraries(), projectUsedLibs);
+                backgroundExecutor.execute(() -> {
+                    // defensive copy to avoid races with UI thread modifications
+                    List<HashMap<String, Object>> projectUsedLibsCopy;
+                    synchronized (projectUsedLibs) {
+                        projectUsedLibsCopy = new ArrayList<>(projectUsedLibs);
+                    }
+                    deleteSelectedLocalLibraries(scId, adapter.getLocalLibraries(), projectUsedLibsCopy);
                     runOnUiThread(() -> {
                         h();
-                        SketchwareUtil.toast("Deleted successfully");
+                        SketchwareUtil.toast(getString(R.string.deleted_successfully));
                         adapter.isSelectionModeEnabled = false;
                         collapseContextualToolbar();
                         runLoadLocalLibrariesTask();
@@ -256,12 +266,22 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            if (backgroundExecutor != null && !backgroundExecutor.isShutdown()) {
+                backgroundExecutor.shutdownNow();
+            }
+        } catch (Exception e) {
+            Log.e("ManageLocalLibrary", "Error shutting down executor", e);
+        }
+    }
+
     private void showOptionsMenu(View anchorView) {
         androidx.appcompat.widget.PopupMenu popupMenu = new androidx.appcompat.widget.PopupMenu(this, anchorView);
 
-        popupMenu.getMenu().add(0, 1, 0, "إعادة تحميل المكتبات");
-        popupMenu.getMenu().add(0, 2, 1, "تحديد الكل");
-        popupMenu.getMenu().add(0, 3, 2, "إدارة المستودعات");
+        popupMenu.getMenu().add(0, 1, 0, getString(R.string.manage_libs_reload)); popupMenu.getMenu().add(0, 2, 1, getString(R.string.manage_libs_select_all)); popupMenu.getMenu().add(0, 3, 2, getString(R.string.manage_libs_manage_repos));
 
         popupMenu.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
@@ -531,9 +551,15 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
     }
 
     private void loadLibraries() {
-        var localLibraries = getAllLocalLibraries();
+        List<LocalLibrary> localLibraries = getAllLocalLibraries();
         if (!notAssociatedWithProject) {
-            projectUsedLibs = getLocalLibraries(scId);
+            // wrap projectUsedLibs in a synchronized list to protect concurrent access
+            List<HashMap<String, Object>> libs = getLocalLibraries(scId);
+            if (libs == null) {
+                projectUsedLibs = Collections.synchronizedList(new ArrayList<>());
+            } else {
+                projectUsedLibs = Collections.synchronizedList(libs);
+            }
         }
 
         localLibraries.sort((lib1, lib2) -> {
@@ -550,9 +576,11 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
 
     private boolean isUsedLibrary(String libraryName) {
         if (!notAssociatedWithProject && projectUsedLibs != null) {
-            for (Map<String, Object> libraryMap : projectUsedLibs) {
-                if (libraryName.equals(libraryMap.get("name").toString())) {
-                    return true;
+            synchronized (projectUsedLibs) {
+                for (Map<String, Object> libraryMap : projectUsedLibs) {
+                    if (libraryName.equals(Objects.toString(libraryMap.get("name"), ""))) {
+                        return true;
+                    }
                 }
             }
         }
@@ -560,36 +588,47 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
     }
 
     private void updateLibraryUsage(LocalLibrary library, boolean isChecked) {
-        if (notAssociatedWithProject || projectUsedLibs == null) return;
+        if (notAssociatedWithProject) return;
+        if (projectUsedLibs == null) {
+            projectUsedLibs = Collections.synchronizedList(new ArrayList<>());
+        }
 
         String name = library.getName();
-        if (!isChecked) {
-            int indexToRemove = -1;
-            for (int i = 0; i < projectUsedLibs.size(); i++) {
-                Map<String, Object> libraryMap = projectUsedLibs.get(i);
-                if (name.equals(libraryMap.get("name").toString())) {
-                    indexToRemove = i;
-                    break;
+        synchronized (projectUsedLibs) {
+            if (!isChecked) {
+                int indexToRemove = -1;
+                for (int i = 0; i < projectUsedLibs.size(); i++) {
+                    Map<String, Object> libraryMap = projectUsedLibs.get(i);
+                    if (name.equals(Objects.toString(libraryMap.get("name"), ""))) {
+                        indexToRemove = i;
+                        break;
+                    }
                 }
-            }
-            if (indexToRemove != -1) {
-                projectUsedLibs.remove(indexToRemove);
-            }
-        } else {
-            boolean alreadyExists = false;
-            String dependency = null;
-            for (Map<String, Object> libraryMap : projectUsedLibs) {
-                if (name.equals(libraryMap.get("name").toString())) {
-                    alreadyExists = true;
-                    break;
+                if (indexToRemove != -1) {
+                    projectUsedLibs.remove(indexToRemove);
                 }
-            }
-            if (!alreadyExists) {
-                HashMap<String, Object> localLibrary = createLibraryMap(name, dependency);
-                projectUsedLibs.add(localLibrary);
+            } else {
+                boolean alreadyExists = false;
+                String dependency = null;
+                for (Map<String, Object> libraryMap : projectUsedLibs) {
+                    if (name.equals(Objects.toString(libraryMap.get("name"), ""))) {
+                        alreadyExists = true;
+                        break;
+                    }
+                }
+                if (!alreadyExists) {
+                    HashMap<String, Object> localLibrary = createLibraryMap(name, dependency);
+                    projectUsedLibs.add(localLibrary);
+                }
             }
         }
-        rewriteLocalLibFile(scId, new Gson().toJson(projectUsedLibs));
+
+        // persist changes
+        try {
+            rewriteLocalLibFile(scId, new Gson().toJson(projectUsedLibs));
+        } catch (Exception e) {
+            Log.e("ManageLocalLibrary", "Failed to rewrite local libraries file", e);
+        }
     }
 
     public interface OnLocalLibrarySelectedStateChangedListener {
@@ -607,18 +646,24 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
 
         @Override
         public void a() {
-            activity.get().h();
+            ManageLocalLibraryActivity act = activity.get();
+            if (act == null || act.isFinishing()) return;
+            act.h();
         }
 
         @Override
         public void a(String idk) {
-            activity.get().h();
+            ManageLocalLibraryActivity act = activity.get();
+            if (act == null || act.isFinishing()) return;
+            act.h();
         }
 
         @Override
         public void b() {
+            ManageLocalLibraryActivity act = activity.get();
+            if (act == null || act.isFinishing()) return;
             try {
-                activity.get().loadLibraries();
+                act.loadLibraries();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -692,8 +737,7 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
             }
             if (library.isSelected() && isUsedLibrary(library.getName())) {
                 new MaterialAlertDialogBuilder(ManageLocalLibraryActivity.this)
-                        .setTitle("Warning")
-                        .setMessage("This library \"" + library.getName() + "\" already used in your project, removing it may break your project\rDo you want to continue removing it?")
+                        .setTitle(getString(R.string.warning_title)) .setMessage(String.format(getString(R.string.warning_remove_used_library_message), library.getName()))
                         .setPositiveButton(Helper.getResString(R.string.common_word_yes), (dialog, which) -> dialog.dismiss())
                         .setNegativeButton(Helper.getResString(R.string.common_word_cancel), (dialog, which) -> {
                             toggleLocalLibrary(card, library, onLocalLibrarySelectedStateChangedListener);
@@ -795,4 +839,4 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
             }
         }
     }
-}
+    }
