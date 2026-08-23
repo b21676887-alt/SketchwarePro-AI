@@ -283,7 +283,9 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
     private void showOptionsMenu(View anchorView) {
         androidx.appcompat.widget.PopupMenu popupMenu = new androidx.appcompat.widget.PopupMenu(this, anchorView);
 
-        popupMenu.getMenu().add(0, 1, 0, getString(R.string.manage_libs_reload)); popupMenu.getMenu().add(0, 2, 1, getString(R.string.manage_libs_select_all)); popupMenu.getMenu().add(0, 3, 2, ge[...]);
+        popupMenu.getMenu().add(0, 1, 0, getString(R.string.manage_libs_reload));
+popupMenu.getMenu().add(0, 2, 1, getString(R.string.manage_libs_select_all));
+popupMenu.getMenu().add(0, 3, 2, getString(R.string.manage_libs_manage_repos));
 
         popupMenu.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
