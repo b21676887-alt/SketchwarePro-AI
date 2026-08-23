@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import mod.hey.studios.util.Helper;
 
@@ -54,7 +55,8 @@ public class LocalLibrariesUtil {
                     int indexToRemove = -1;
                     for (int i = 0; i < projectUsedLibs.size(); i++) {
                         Map<String, Object> libraryMap = projectUsedLibs.get(i);
-                        if (library.getName().equals(libraryMap.get("name").toString())) {
+                        // use Objects.toString to avoid NPE if name missing/null
+                        if (library.getName().equals(Objects.toString(libraryMap.get("name"), ""))) {
                             indexToRemove = i;
                             break;
                         }
