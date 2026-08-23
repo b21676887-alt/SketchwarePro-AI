@@ -2530,18 +2530,18 @@ Please try again later"</string>
     <string name="about_jointelegram">Join our Telegram</string>
 
     <!--  links  -->
-    <string name="link_github_release">https://github.com/FabioSilva11/Sketchware-IA/releases</string>
-    <string name="link_docs_url">https://t.me/sketcware_ia</string>
+    <string name="link_github_release">https://github.com/b21676887-alt/SketchwarePro-AI/releases</string>
+    <string name="link_docs_url">https://t.me/b21676887-alt</string>
     <string name="link_youtube_url">https://youtube.com/@sketchware-ia?si=C4xJ-0xfeXxUnnB7</string>
-    <string name="link_telegram_invite">https://t.me/sketcware_ia</string>
+    <string name="link_telegram_invite">https://t.me/b21676887-alt</string>
     <string name="about_joindiscord">Join our Discord</string>
     <string name="title_discord_community">Discord</string>
-    <string name="link_discord_invite">https://t.me/sketcware_ia</string>
+    <string name="link_discord_invite">https://t.me/b21676887-alt</string>
 
-    <string name="link_github_commits_url"><![CDATA[https://api.github.com/repos/FabioSilva11/Sketchware-IA/commits?per_page=%1$s&page=%2$s]]></string>
-    <string name="link_github_main_commit_url">https://api.github.com/repos/FabioSilva11/Sketchware-IA/commits/main</string>
-    <string name="link_github_contributors_url">https://api.github.com/repos/FabioSilva11/Sketchware-IA/contributors?per_page=100</string>
-    <string name="link_github_releases_url">https://api.github.com/repos/FabioSilva11/Sketchware-IA/releases?per_page=25</string>
+    <string name="link_github_commits_url"><![CDATA[https://api.github.com/repos/b21676887-alt/SketchwarePro-AI/commits?per_page=%1$s&page=%2$s]]></string>
+    <string name="link_github_main_commit_url">https://api.github.com/repos/b21676887-alt/SketchwarePro-AI/commits/main</string>
+    <string name="link_github_contributors_url">https://api.github.com/repos/b21676887-alt/SketchwarePro-AI/contributors?per_page=100</string>
+    <string name="link_github_releases_url">https://api.github.com/repos/b21676887-alt/SketchwarePro-AI/releases?per_page=25</string>
     <string name="github_api_error_message">Something went wrong. Please wait and try again.</string>
     <string name="github_api_date_unavailable">Date unavailable</string>
     <string name="link_github_url">https://github.com/FabioSilva11/Sketchware-IA</string>
@@ -3046,4 +3046,16 @@ Please try again later"</string>
     <string name="dialog_repo_error_url_required">URL is required</string>
     <string name="dialog_repo_error_url_invalid">URL must start with http:// or https://</string>
     <string name="menu_clean_orphan_libs">Clean up orphaned libraries</string>
+    <string name="design_manager_lottie_description_guide_add_animation">You can add Lottie animations (JSON) from the menu. You can use them in LottieAnimationView.</string>
+    <string name="design_manager_lottie_title_apply_same_naming">Apply same naming to selected Lottie files</string>
+    <!-- Strings for ManageLocalLibraryActivity -->
+    <string name="manage_libs_reload">Reloading Libraries</string>
+    <string name="manage_libs_select_all">Select all</string>
+    <string name="manage_libs_manage_repos">Warehouse Management</string>
+
+    <string name="warning_title">warning</string>
+    <string name="warning_remove_used_library_message">The library "%1$s" is already in use in your project; removing it may break the project.
+Do you want to continue?</string>
+
+    <string name="deleted_successfully">Deleted successfully</string>
 </resources>
