@@ -199,21 +199,13 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
                 k();
                 backgroundExecutor.execute(() -> {
                     // defensive copy to avoid races with UI thread modifications
-                    List<HashMap<String, Object>> projectUsedLibsCopy;
+                    ArrayList<HashMap<String, Object>> projectUsedLibsCopy;
                     synchronized (projectUsedLibs) {
                         projectUsedLibsCopy = new ArrayList<>(projectUsedLibs);
                     }
 
-                    // Convert selected adapter LocalLibrary items into ArrayList<HashMap<String,Object>>
-                    ArrayList<HashMap<String, Object>> adapterLibMaps = new ArrayList<>();
-                    for (LocalLibrary lib : adapter.getLocalLibraries()) {
-                        if (lib.isSelected()) {
-                            // createLibraryMap(name, dependency) produces the expected map shape
-                            adapterLibMaps.add(createLibraryMap(lib.getName(), null));
-                        }
-                    }
-
-                    deleteSelectedLocalLibraries(scId, adapterLibMaps, projectUsedLibsCopy);
+                    // Pass the adapter's LocalLibrary list directly (matches LocalLibrariesUtil signature)
+                    deleteSelectedLocalLibraries(scId, adapter.getLocalLibraries(), projectUsedLibsCopy);
                     runOnUiThread(() -> {
                         h();
                         SketchwareUtil.toast(getString(R.string.deleted_successfully));
