@@ -17,41 +17,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  cleanupArtifacts:
-    name: Clean up old artifacts
-    runs-on: ubuntu-latest
-    permissions:
-      actions: write
-    steps:
-      - name: Delete old artifacts (keep only 5 most recent)
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { data: artifacts } = await github.rest.actions.listArtifactsForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              per_page: 100
-            });
-
-            artifacts.artifacts.sort((a, b) =>
-              new Date(b.created_at) - new Date(a.created_at)
-            );
-
-            const toDelete = artifacts.artifacts.slice(5);
-
-            console.log(`Total artifacts: ${artifacts.artifacts.length}`);
-            console.log(`Keeping: ${Math.min(artifacts.artifacts.length, 5)}`);
-            console.log(`Deleting: ${toDelete.length}`);
-
-            for (const artifact of toDelete) {
-              console.log(`Deleting: ${artifact.name} (created: ${artifact.created_at})`);
-              await github.rest.actions.deleteArtifact({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                artifact_id: artifact.id
-              });
-            }
-
   build:
     name: Build APKs
     runs-on: ${{ vars.IS_USING_HOSTED_RUNNERS == 'true' && 'self-hosted' || 'ubuntu-latest' }}
@@ -163,14 +128,36 @@ jobs:
             --latest \
             --target "${GITHUB_SHA}"
 
-  cleanupReleases:
-    name: Clean up old releases
+  cleanupArtifactsAndReleases:
+    name: Clean up old artifacts and releases
     runs-on: ubuntu-latest
     needs: publishRelease
     if: github.ref == 'refs/heads/main'
     permissions:
+      actions: write
       contents: write
     steps:
+      - name: Delete old artifacts (keep only 5 most recent)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: artifacts } = await github.rest.actions.listArtifactsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100
+            });
+
+            artifacts.artifacts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            const toDelete = artifacts.artifacts.slice(5);
+
+            for (const artifact of toDelete) {
+              await github.rest.actions.deleteArtifact({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: artifact.id
+              });
+            }
+
       - name: Delete old releases (keep only 5 most recent)
         uses: actions/github-script@v7
         with:
@@ -181,18 +168,10 @@ jobs:
               per_page: 100
             });
 
-            releases.sort((a, b) =>
-              new Date(b.created_at) - new Date(a.created_at)
-            );
-
+            releases.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             const toDelete = releases.slice(5);
 
-            console.log(`Total releases: ${releases.length}`);
-            console.log(`Keeping: ${Math.min(releases.length, 5)}`);
-            console.log(`Deleting: ${toDelete.length}`);
-
             for (const release of toDelete) {
-              console.log(`Deleting release: ${release.tag_name} (created: ${release.created_at})`);
               await github.rest.repos.deleteRelease({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -203,9 +182,12 @@ jobs:
   updateAppData:
     name: Update App Data
     runs-on: ubuntu-latest
+    needs: publishRelease
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
         with:
+          token: ${{ secrets.GH_ABOUT_APP_WORKFLOW_TOKEN || secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Set up Python 3
@@ -214,20 +196,17 @@ jobs:
           python-version: '3.x'
 
       - name: Install Dependencies
-        run: |
-          pip install requests
+        run: pip install requests
 
       - name: Run Update App Script
         run: python .github/workflows/update_app_data.py
 
       - name: Commit and Push Changes
-        env:
-          GH_ABOUT_APP_WORKFLOW_TOKEN: ${{ secrets.GH_ABOUT_APP_WORKFLOW_TOKEN }}
         run: |
-          git checkout host
+          git checkout host || git checkout -b host
           git config --global user.name "Sketchware Pro Actions"
           git config --global user.email "hello@sketchware.pro"
           git add about.json
-          git commit -m "feat: Update app about screen data"
-          git push
+          git commit -m "feat: Update app about screen data" || echo "No changes to commit"
+          git push origin host
         continue-on-error: true
