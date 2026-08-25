@@ -47,10 +47,8 @@ import pro.sketchware.activities.settings.GithubSettingsActivity;
 import pro.sketchware.activities.settings.IaSettingsActivity;
 import pro.sketchware.databinding.ActivityAppSettingsBinding;
 import pro.sketchware.databinding.DialogSelectApkToSignBinding;
-import pro.sketchware.utility.AdManager;
 import pro.sketchware.utility.FileUtil;
 import pro.sketchware.utility.SketchwareUtil;
-import pro.sketchware.utility.TranslationFunction;
 
 public class AppSettings extends BaseAppCompatActivity {
     @Override
@@ -94,46 +92,28 @@ public class AppSettings extends BaseAppCompatActivity {
 
     private void setupPreferences(ViewGroup content) {
         LibraryCategoryView managersCategory = new LibraryCategoryView(this);
-        managersCategory.setTitle("Managers");
+        managersCategory.setTitle(Helper.getResString(R.string.title_managers_category));
 
-        managersCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_block, "Block manager", "Manage your own blocks to use in Logic Editor", new ActivityLauncher(new Intent(getApplicationContext(), BlocksManager.class))), true);
-        managersCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_pull_down, "Block selector menu manager", "Manage your own block selector menus", openSettingsActivity(SettingsActivity.BLOCK_SELECTOR_MANAGER_FRAGMENT)), true);
-        managersCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_component, "Component manager", "Manage your own components", new ActivityLauncher(new Intent(getApplicationContext(), ManageCustomComponentActivity.class))), true);
-        managersCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_list, "Event manager", "Manage your own events", openSettingsActivity(SettingsActivity.EVENTS_MANAGER_FRAGMENT)), true);
-        managersCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_box, "Local library manager", "Manage and download local libraries", new ActivityLauncher(new Intent(getApplicationContext(), ManageLocalLibraryActivity.class), new Pair<>("sc_id", "system"))), true);
+        managersCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_block, Helper.getResString(R.string.title_block_manager), Helper.getResString(R.string.subtitle_block_manager), new ActivityLauncher(new Intent(getApplicationContext(), BlocksManager.class))), true);
+        managersCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_pull_down, Helper.getResString(R.string.title_block_selector_menu_manager), Helper.getResString(R.string.subtitle_block_selector_menu_manager), openSettingsActivity(SettingsActivity.BLOCK_SELECTOR_MANAGER_FRAGMENT)), true);
+        managersCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_component, Helper.getResString(R.string.title_component_manager), Helper.getResString(R.string.subtitle_component_manager), new ActivityLauncher(new Intent(getApplicationContext(), ManageCustomComponentActivity.class))), true);
+        managersCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_list, Helper.getResString(R.string.title_event_manager), Helper.getResString(R.string.subtitle_event_manager), openSettingsActivity(SettingsActivity.EVENTS_MANAGER_FRAGMENT)), true);
+        managersCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_box, Helper.getResString(R.string.title_local_library_manager), Helper.getResString(R.string.subtitle_local_library_manager), new ActivityLauncher(new Intent(getApplicationContext(), ManageLocalLibraryActivity.class), new Pair<>("sc_id", "system"))), true);
         managersCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_article, Helper.getResString(R.string.design_drawer_menu_title_logcat_reader), Helper.getResString(R.string.design_drawer_menu_subtitle_logcat_reader), new ActivityLauncher(new Intent(getApplicationContext(), LogReaderActivity.class))), false);
 
         LibraryCategoryView generalCategory = new LibraryCategoryView(this);
-        generalCategory.setTitle("General");
+        generalCategory.setTitle(Helper.getResString(R.string.title_general_category));
 
-        generalCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_settings_applications, "App settings", "Change general app settings", new ActivityLauncher(new Intent(getApplicationContext(), ConfigActivity.class))), true);
+        generalCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_settings_applications, Helper.getResString(R.string.title_app_settings), Helper.getResString(R.string.subtitle_app_settings), new ActivityLauncher(new Intent(getApplicationContext(), ConfigActivity.class))), true);
         generalCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_palette, Helper.getResString(R.string.settings_appearance), Helper.getResString(R.string.settings_appearance_description), openSettingsActivity(SettingsActivity.SETTINGS_APPEARANCE_FRAGMENT)), true);
         generalCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_settings, Helper.getResString(R.string.ia_settings_title), Helper.getResString(R.string.ia_settings_subtitle), new ActivityLauncher(new Intent(getApplicationContext(), IaSettingsActivity.class))), true);
-        generalCategory.addLibraryItem(createPreference(R.drawable.ic_github, "GitHub Settings", "Manage GitHub API token for the AI agent", new ActivityLauncher(new Intent(getApplicationContext(), GithubSettingsActivity.class))), true);
-        generalCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_folder, "Open working directory", "Open Sketchware Pro's directory and edit files in it", v -> openWorkingDirectory()), true);
-        generalCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_apk_document, "Sign an APK file with testkey", "Sign an already existing APK file with testkey and signature schemes up to V4", v -> signApkFileDialog()), true);
-        generalCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_settings, Helper.getResString(R.string.main_drawer_title_system_settings), "Auto-save and vibrations", new ActivityLauncher(new Intent(getApplicationContext(), SystemSettingActivity.class))), false);
+        generalCategory.addLibraryItem(createPreference(R.drawable.ic_github, Helper.getResString(R.string.title_github_settings), Helper.getResString(R.string.subtitle_github_settings), new ActivityLauncher(new Intent(getApplicationContext(), GithubSettingsActivity.class))), true);
+        generalCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_folder, Helper.getResString(R.string.title_open_working_directory), Helper.getResString(R.string.subtitle_open_working_directory), v -> openWorkingDirectory()), true);
+        generalCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_apk_document, Helper.getResString(R.string.title_sign_apk_file), Helper.getResString(R.string.subtitle_sign_apk_file), v -> signApkFileDialog()), true);
+        generalCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_settings, Helper.getResString(R.string.main_drawer_title_system_settings), Helper.getResString(R.string.subtitle_system_settings), new ActivityLauncher(new Intent(getApplicationContext(), SystemSettingActivity.class))), false);
 
-        // "Managers" card, then the ad between the two cards (never overlapping either),
-        // then the "General" card below it.
         content.addView(managersCategory);
-        content.addView(createAdSlot());
         content.addView(generalCategory);
-    }
-
-    private View createAdSlot() {
-        LinearLayout adContainer = new LinearLayout(this);
-        adContainer.setOrientation(LinearLayout.VERTICAL);
-        adContainer.setGravity(android.view.Gravity.CENTER);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        int marginVertical = (int) (8 * getResources().getDisplayMetrics().density);
-        params.topMargin = marginVertical;
-        params.bottomMargin = marginVertical;
-        adContainer.setLayoutParams(params);
-
-        AdManager.loadBanner(this, adContainer, "ca-app-pub-6598765502914364/9402654479");
-        return adContainer;
     }
 
     private View.OnClickListener openSettingsActivity(String fragmentTag) {
@@ -158,7 +138,7 @@ public class AppSettings extends BaseAppCompatActivity {
         FilePickerOptions options = new FilePickerOptions();
         options.setSelectionMode(SelectionMode.BOTH);
         options.setMultipleSelection(true);
-        options.setTitle("Select an entry to modify");
+        options.setTitle(Helper.getResString(R.string.file_picker_select_entry_to_modify));
         options.setInitialDirectory(getFilesDir().getParentFile().getAbsolutePath());
 
         FilePickerCallback callback = new FilePickerCallback() {
@@ -167,11 +147,11 @@ public class AppSettings extends BaseAppCompatActivity {
                 boolean isDirectory = files.get(0).isDirectory();
                 if (files.size() > 1 || isDirectory) {
                     new MaterialAlertDialogBuilder(AppSettings.this)
-                            .setTitle("Select an action")
-                            .setSingleChoiceItems(new String[]{"Delete"}, -1, (actionDialog, which) -> {
+                            .setTitle(Helper.getResString(R.string.dialog_title_select_action))
+                            .setSingleChoiceItems(new String[]{Helper.getResString(R.string.common_word_delete)}, -1, (actionDialog, which) -> {
                                 new MaterialAlertDialogBuilder(AppSettings.this)
-                                        .setTitle("Delete " + (isDirectory ? "folder" : "file") + "?")
-                                        .setMessage("Are you sure you want to delete this " + (isDirectory ? "folder" : "file") + " permanently? This cannot be undone.")
+                                        .setTitle(String.format(Helper.getResString(R.string.dialog_title_delete_item), isDirectory ? Helper.getResString(R.string.word_folder) : Helper.getResString(R.string.word_file)))
+                                        .setMessage(String.format(Helper.getResString(R.string.dialog_message_delete_confirm), isDirectory ? Helper.getResString(R.string.word_folder) : Helper.getResString(R.string.word_file)))
                                         .setPositiveButton(R.string.common_word_delete, (deleteConfirmationDialog, pressedButton) -> {
                                             for (File file : files) {
                                                 FileUtil.deleteFile(file.getAbsolutePath());
@@ -185,8 +165,8 @@ public class AppSettings extends BaseAppCompatActivity {
                             .show();
                 } else {
                     new MaterialAlertDialogBuilder(AppSettings.this)
-                            .setTitle("Select an action")
-                            .setSingleChoiceItems(new String[]{"Edit", "Delete"}, -1, (actionDialog, which) -> {
+                            .setTitle(Helper.getResString(R.string.dialog_title_select_action))
+                            .setSingleChoiceItems(new String[]{Helper.getResString(R.string.common_word_edit), Helper.getResString(R.string.common_word_delete)}, -1, (actionDialog, which) -> {
                                 switch (which) {
                                     case 0 -> {
                                         Intent intent = new Intent(getApplicationContext(), SrcCodeEditor.class);
@@ -196,8 +176,8 @@ public class AppSettings extends BaseAppCompatActivity {
                                         startActivity(intent);
                                     }
                                     case 1 -> new MaterialAlertDialogBuilder(AppSettings.this)
-                                            .setTitle("Delete file?")
-                                            .setMessage("Are you sure you want to delete this file permanently? This cannot be undone.")
+                                            .setTitle(Helper.getResString(R.string.dialog_title_delete_file))
+                                            .setMessage(Helper.getResString(R.string.dialog_message_delete_file_confirm))
                                             .setPositiveButton(R.string.common_word_delete, (deleteDialog, pressedButton) ->
                                                     FileUtil.deleteFile(files.get(0).getAbsolutePath()))
                                             .setNegativeButton(R.string.common_word_cancel, null)
@@ -216,7 +196,7 @@ public class AppSettings extends BaseAppCompatActivity {
     private void signApkFileDialog() {
         boolean[] isAPKSelected = {false};
         MaterialAlertDialogBuilder apkPathDialog = new MaterialAlertDialogBuilder(this);
-        apkPathDialog.setTitle("Sign APK with testkey");
+        apkPathDialog.setTitle(Helper.getResString(R.string.title_sign_apk_dialog));
 
         DialogSelectApkToSignBinding binding = DialogSelectApkToSignBinding.inflate(getLayoutInflater());
         View testkey_root = binding.getRoot();
@@ -236,9 +216,9 @@ public class AppSettings extends BaseAppCompatActivity {
             dialog.show(getSupportFragmentManager(), "file_picker");
         });
 
-        apkPathDialog.setPositiveButton("Continue", (v, which) -> {
+        apkPathDialog.setPositiveButton(Helper.getResString(R.string.common_word_continue), (v, which) -> {
             if (!isAPKSelected[0]) {
-                SketchwareUtil.toast("Please select an APK file to sign", Toast.LENGTH_SHORT);
+                SketchwareUtil.toast(Helper.getResString(R.string.toast_select_apk_first), Toast.LENGTH_SHORT);
                 shakeView(binding.selectFile);
                 return;
             }
@@ -250,11 +230,11 @@ public class AppSettings extends BaseAppCompatActivity {
             if (new File(output_apk_path).exists()) {
                 MaterialAlertDialogBuilder confirmOverwrite = new MaterialAlertDialogBuilder(this);
                 confirmOverwrite.setIcon(R.drawable.color_save_as_new_96);
-                confirmOverwrite.setTitle("File exists");
-                confirmOverwrite.setMessage("An APK named " + output_apk_file_name + " already exists at /sketchware/signed_apk/.  Overwrite it?");
+                confirmOverwrite.setTitle(Helper.getResString(R.string.dialog_title_file_exists));
+                confirmOverwrite.setMessage(String.format(Helper.getResString(R.string.dialog_message_overwrite_apk), output_apk_file_name));
 
                 confirmOverwrite.setNegativeButton(Helper.getResString(R.string.common_word_cancel), null);
-                confirmOverwrite.setPositiveButton("Overwrite", (view, which1) -> {
+                confirmOverwrite.setPositiveButton(Helper.getResString(R.string.common_word_overwrite), (view, which1) -> {
                     v.dismiss();
                     signApkFileWithDialog(input_apk_path, output_apk_path, true,
                             null, null, null, null);
@@ -283,7 +263,7 @@ public class AppSettings extends BaseAppCompatActivity {
         scroll_view.addView(tv_log);
         layout_quiz.addView(scroll_view);
 
-        tv_progress.setText("Signing APK...");
+        tv_progress.setText(Helper.getResString(R.string.progress_signing_apk));
 
         AlertDialog building_dialog = new MaterialAlertDialogBuilder(this)
                 .setView(building_root)
@@ -308,11 +288,10 @@ public class AppSettings extends BaseAppCompatActivity {
                 runOnUiThread(() -> {
                     if (ApkSigner.LogCallback.errorCount.get() == 0) {
                         building_dialog.dismiss();
-                        SketchwareUtil.toast("Successfully saved signed APK to: /Internal storage/sketchware/signed_apk/"
-                                        + Uri.fromFile(new File(outputApkPath)).getLastPathSegment(),
+                        SketchwareUtil.toast(String.format(Helper.getResString(R.string.toast_sign_apk_success), Uri.fromFile(new File(outputApkPath)).getLastPathSegment()),
                                 Toast.LENGTH_LONG);
                     } else {
-                        tv_progress.setText("An error occurred. Check the log for more details.");
+                        tv_progress.setText(Helper.getResString(R.string.progress_signing_apk_error));
                     }
                 });
             }
