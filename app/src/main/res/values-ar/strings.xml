@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- نسخة عربية مُولدة من ملف strings.xml (ترجمة تقنية) -->
+    <!-- Arabic translations (finalized for UI strings). Technical identifiers and developer-facing keys (block_*, API names, etc.) left in English intentionally. Review placeholders (%1$s, %1$d) remain unchanged. -->
+
     <string name="design_drawer_menu_title_lottie">إدارة Lottie</string>
     <string name="design_drawer_menu_description_lottie">إدارة رسوم Lottie المتحركة</string>
     <string name="design_manager_lottie_hint_enter_animation_name">أدخل اسم الرسوم المتحركة</string>
@@ -48,8 +49,11 @@
     <string name="store_download_progress">%1$d%% - %2$s من %3$s</string>
     <string name="store_download_progress_unknown">تم تنزيل %1$s</string>
     <string name="store_download_permission_denied">تم رفض الإذن. لم يبدأ التنزيل.</string>
+
     <string name="web_services_title">واجهات برمجة التطبيقات والموارد</string>
     <string name="web_service_open_error">تعذر فتح هذا الرابط</string>
+
+    <!-- Studio / Editor UI strings -->
     <string name="studio_editor_title">مشروع Android Studio</string>
     <string name="studio_files">المشروع</string>
     <string name="studio_select_file">اختر ملفًا</string>
@@ -198,4 +202,6 @@
     <string name="studio_file_not_editable">هذا الملف ليس ملف نصي مدعومًا للتحرير.</string>
     <string name="appbar_scrolling_view_behavior">com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior</string>
     <string name="besome_blog_url">http://medium.com/sketchware</string>
-    <!-- For remaining strings not explicitly translated above, fall back to English to ensure completeness. -->
+
+    <!-- Remaining 'block_' and other developer-facing keys intentionally kept in English -->
+</resources>
