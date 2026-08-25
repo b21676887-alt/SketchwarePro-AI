@@ -1876,7 +1876,7 @@ But, components should be added manually for working correctly."</string>
     <string name="github_settings_versioning_title">Android Studio project versioning</string>
     <string name="github_settings_versioning_description">Open an Android Studio project and select GitHub from the editor menu. You can create or connect a repository and publish the project in one commit. Builds, caches, APKs, local.properties, .env files and signing files are ignored. Native Sketchware projects are not uploaded by this feature.</string>
     <string name="github_settings_examples_title">Chat usage examples</string>
-    <string name="github_settings_examples_description">In agent mode, you can ask:\n\n“List my repositories”\n“Read app/build.gradle from FabioSilva11/Sketchware-IA”\n“Search for AgentManager in my Sketchware-IA repository”\n“Create an issue titled Bug: signing fails on API 30”\n“Open a pull request from fix/signing-v3 to main”\n\nThe agent selects the appropriate GitHub tool automatically.</string>
+    <string name="github_settings_examples_description">In agent mode, you can ask:\n\n“List my repositories”\n“Read app/build.gradle from b21676887-alt/SketchwarePro-AI”\n“Search for AgentManager in my Sketchware-IA repository”\n“Create an issue titled Bug: signing fails on API 30”\n“Open a pull request from fix/signing-v3 to main”\n\nThe agent selects the appropriate GitHub tool automatically.</string>
     <string name="github_settings_token_missing">⚠ No token configured — GitHub tools are disabled in chat.</string>
     <string name="github_settings_token_configured">✓ Token configured (%1$d characters). GitHub tools are active in agent mode.</string>
     <string name="github_settings_open_link_failed">Could not open the link.</string>
@@ -2544,7 +2544,7 @@ Please try again later"</string>
     <string name="link_github_releases_url">https://api.github.com/repos/b21676887-alt/SketchwarePro-AI/releases?per_page=25</string>
     <string name="github_api_error_message">Something went wrong. Please wait and try again.</string>
     <string name="github_api_date_unavailable">Date unavailable</string>
-    <string name="link_github_url">https://github.com/FabioSilva11/Sketchware-IA</string>
+    <string name="link_github_url">https://github.com/b21676887-alt/SketchwarePro-AI</string>
     <string name="link_sw_assist">https://play.google.com/store/apps/details?id=com.w3wide.swassist</string>
     <string name="change_launcher_activity_dialog_title">Launcher Activity</string>
     <string name="common_word_add_activtiy">Add Activity</string>
