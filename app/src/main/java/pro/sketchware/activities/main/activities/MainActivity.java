@@ -113,7 +113,7 @@ public class MainActivity extends BasePermissionAppCompatActivity {
         if (i == 9501) {
             allFilesAccessCheck();
             restoreExternalTranslationSupport();
-            maybeShowAdsNoticeIfDue(adsNoticeOpenCountForLaunch);
+            //maybeShowAdsNoticeIfDue(adsNoticeOpenCountForLaunch);
 
             refreshProjectBackedFragments();
         }
@@ -243,7 +243,7 @@ public class MainActivity extends BasePermissionAppCompatActivity {
         }
         if (hasStorageAccess) {
             allFilesAccessCheck();
-            maybeShowAdsNoticeIfDue(adsNoticeOpenCountForLaunch);
+            //maybeShowAdsNoticeIfDue(adsNoticeOpenCountForLaunch);
         }
 
         if (Intent.ACTION_VIEW.equals(getIntent().getAction())) {
@@ -330,6 +330,9 @@ public class MainActivity extends BasePermissionAppCompatActivity {
     }
 
     private void maybeShowAdsNoticeIfDue(int openCount) {
+        // تم توقيف عرض النافذة بشكل دائم مع الحفاظ على باقي الكود
+        if (true) return;
+
         if (openCount <= 0 || openCount % ADS_NOTICE_OPEN_INTERVAL != 0) return;
         if (adsNoticeDialog != null && adsNoticeDialog.isShowing()) return;
 
