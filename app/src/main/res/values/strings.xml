@@ -3093,8 +3093,6 @@ Do you want to continue?</string>
     <string name="dialog_message_delete_file_confirm">Are you sure you want to delete this file permanently? This cannot be undone.</string>
     <string name="word_folder">folder</string>
     <string name="word_file">file</string>
-    <string name="common_word_edit">Edit</string>
-    <string name="common_word_continue">Continue</string>
     <string name="common_word_overwrite">Overwrite</string>
 
     <!-- APK Signer -->
