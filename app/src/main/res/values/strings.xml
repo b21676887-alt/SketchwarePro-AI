@@ -3058,4 +3058,54 @@ Please try again later"</string>
 Do you want to continue?</string>
 
     <string name="deleted_successfully">Deleted successfully</string>
+    <resources>
+    <!-- Categories -->
+    <string name="title_managers_category">Managers</string>
+    <string name="title_general_category">General</string>
+
+    <!-- Preferences Titles & Subtitles -->
+    <string name="title_block_manager">Block manager</string>
+    <string name="subtitle_block_manager">Manage your own blocks to use in Logic Editor</string>
+    <string name="title_block_selector_menu_manager">Block selector menu manager</string>
+    <string name="subtitle_block_selector_menu_manager">Manage your own block selector menus</string>
+    <string name="title_component_manager">Component manager</string>
+    <string name="subtitle_component_manager">Manage your own components</string>
+    <string name="title_event_manager">Event manager</string>
+    <string name="subtitle_event_manager">Manage your own events</string>
+    <string name="title_local_library_manager">Local library manager</string>
+    <string name="subtitle_local_library_manager">Manage and download local libraries</string>
+    
+    <string name="title_app_settings">App settings</string>
+    <string name="subtitle_app_settings">Change general app settings</string>
+    <string name="title_github_settings">GitHub Settings</string>
+    <string name="subtitle_github_settings">Manage GitHub API token for the AI agent</string>
+    <string name="title_open_working_directory">Open working directory</string>
+    <string name="subtitle_open_working_directory">Open Sketchware Pro\'s directory and edit files in it</string>
+    <string name="title_sign_apk_file">Sign an APK file with testkey</string>
+    <string name="subtitle_sign_apk_file">Sign an already existing APK file with testkey and signature schemes up to V4</string>
+    <string name="subtitle_system_settings">Auto-save and vibrations</string>
+
+    <!-- File Picker & Directory Actions -->
+    <string name="file_picker_select_entry_to_modify">Select an entry to modify</string>
+    <string name="dialog_title_select_action">Select an action</string>
+    <string name="dialog_title_delete_item">Delete %1$s?</string>
+    <string name="dialog_message_delete_confirm">Are you sure you want to delete this %1$s permanently? This cannot be undone.</string>
+    <string name="dialog_title_delete_file">Delete file?</string>
+    <string name="dialog_message_delete_file_confirm">Are you sure you want to delete this file permanently? This cannot be undone.</string>
+    <string name="word_folder">folder</string>
+    <string name="word_file">file</string>
+    <string name="common_word_edit">Edit</string>
+    <string name="common_word_continue">Continue</string>
+    <string name="common_word_overwrite">Overwrite</string>
+
+    <!-- APK Signer -->
+    <string name="title_sign_apk_dialog">Sign APK with testkey</string>
+    <string name="toast_select_apk_first">Please select an APK file to sign</string>
+    <string name="dialog_title_file_exists">File exists</string>
+    <string name="dialog_message_overwrite_apk">An APK named %1$s already exists at /sketchware/signed_apk/. Overwrite it?</string>
+    <string name="progress_signing_apk">Signing APK...</string>
+    <string name="progress_signing_apk_error">An error occurred. Check the log for more details.</string>
+    <string name="toast_sign_apk_success">Successfully saved signed APK to: /Internal storage/sketchware/signed_apk/%1$s</string>
+</resources>
+
 </resources>
