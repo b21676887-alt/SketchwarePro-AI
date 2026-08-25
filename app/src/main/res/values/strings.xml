@@ -3058,7 +3058,6 @@ Please try again later"</string>
 Do you want to continue?</string>
 
     <string name="deleted_successfully">Deleted successfully</string>
-    <resources>
     <!-- Categories -->
     <string name="title_managers_category">Managers</string>
     <string name="title_general_category">General</string>
@@ -3106,6 +3105,4 @@ Do you want to continue?</string>
     <string name="progress_signing_apk">Signing APK...</string>
     <string name="progress_signing_apk_error">An error occurred. Check the log for more details.</string>
     <string name="toast_sign_apk_success">Successfully saved signed APK to: /Internal storage/sketchware/signed_apk/%1$s</string>
-</resources>
-
 </resources>
