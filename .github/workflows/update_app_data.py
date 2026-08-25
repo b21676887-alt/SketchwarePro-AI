@@ -8,7 +8,7 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Constants
-GITHUB_REPO = "FabioSilva11/Sketchware-IA"
+GITHUB_REPO = "b21676887-alt/SketchwarePro-AI"
 GITHUB_TOKEN = os.getenv("GH_ABOUT_APP_WORKFLOW_TOKEN")
 GITHUB_API_BASE = "https://api.github.com"
 GITHUB_ABOUT_APP_FILE = "about.json"
