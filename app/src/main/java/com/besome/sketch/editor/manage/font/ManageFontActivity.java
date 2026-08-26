@@ -89,7 +89,8 @@ public class ManageFontActivity extends BaseAppCompatActivity {
         });
 
         binding.tabLayout.setupWithViewPager(binding.viewPager);
-        AdManager.loadBanner(this, binding.adContainer, "ca-app-pub-6598765502914364/2542249577");
+        //AdManager.loadBanner(this, binding.adContainer, "ca-app-pub-6598765502914364/2542249577");
+        binding.adContainer.setVisibility(View.GONE);
     }
 
     public void changeFabState(boolean state) {
