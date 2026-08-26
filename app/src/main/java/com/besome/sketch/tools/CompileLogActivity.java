@@ -140,7 +140,7 @@ public class CompileLogActivity extends BaseAppCompatActivity {
             binding.aiExplainButton.setOnClickListener(v -> explainLogWithAI());
         }
 
-        AdManager.loadBanner(this, findViewById(R.id.ad_container), "ca-app-pub-6598765502914364/2525937709");
+        //AdManager.loadBanner(this, findViewById(R.id.ad_container), "ca-app-pub-6598765502914364/2525937709");
 
     }
 
