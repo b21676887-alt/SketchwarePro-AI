@@ -451,7 +451,8 @@ public class ResourcesEditorActivity extends BaseAppCompatActivity {
             }
         }).attach();
         UI.animateLayoutChanges(binding.viewPager);
-        AdManager.loadBanner(this, findViewById(R.id.ad_container), "ca-app-pub-6598765502914364/2542249577");
+        //AdManager.loadBanner(this, findViewById(R.id.ad_container), "ca-app-pub-6598765502914364/2542249577");
+        
     }
 
     private void changeTheVariantDialog() {
