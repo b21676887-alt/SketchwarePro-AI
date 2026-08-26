@@ -213,7 +213,8 @@ public class ProjectsFragment extends DA {
         requireActivity().addMenuProvider(menuProvider);
 
         if (getActivity() != null) {
-            AdManager.loadBanner(requireActivity(), binding.adContainer, "ca-app-pub-6598765502914364/1327212196");
+            //AdManager.loadBanner(requireActivity(), binding.adContainer, "ca-app-pub-6598765502914364/1327212196");
+            binding.adContainer.setVisibility(View.GONE);
         }
     }
 
