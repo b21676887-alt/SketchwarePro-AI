@@ -298,7 +298,7 @@ public class ManageViewActivity extends BaseAppCompatActivity implements OnClick
         s = findViewById(R.id.fab);
         s.setOnClickListener(this);
 
-        AdManager.loadBanner(this, findViewById(R.id.ad_container), "ca-app-pub-6598765502914364/8899774369");
+        //AdManager.loadBanner(this, findViewById(R.id.ad_container), "ca-app-pub-6598765502914364/8899774369");
     }
 
     @Override
