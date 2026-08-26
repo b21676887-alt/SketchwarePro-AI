@@ -54,7 +54,8 @@ public class CodeViewerActivity extends BaseAppCompatActivity {
         UI.addSystemWindowInsetToPadding(binding.appBarLayout, true, true, true, false);
         UI.addSystemWindowInsetToMargin(binding.editor, true, false, true, true);
 
-        AdManager.loadBanner(this, binding.adContainer, "ca-app-pub-6598765502914364/9402654479");
+        //AdManager.loadBanner(this, binding.adContainer, "ca-app-pub-6598765502914364/9402654479");
+        binding.adContainer.setVisibility(View.GONE);
     }
 
     // Catches the physical phone hardware back button or swipe gesture
