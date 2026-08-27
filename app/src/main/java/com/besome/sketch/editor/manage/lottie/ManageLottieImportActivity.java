@@ -89,7 +89,7 @@ public class ManageLottieImportActivity extends BaseAppCompatActivity implements
             names = names + name;
         }
         bB.a(getApplicationContext(), xB.b().a(getApplicationContext(),
-                Helper.getResString(R.string.common_message_name_unavailable) + "\n[" + names + "]", bB.TOAST_WARNING).show();
+                Helper.getResString(R.string.common_message_name_unavailable) + "\n[" + names + "]", bB.TOAST_WARNING)).show();
         return true;
     }
 
@@ -154,10 +154,10 @@ public class ManageLottieImportActivity extends BaseAppCompatActivity implements
         tv_currentnum = findViewById(R.id.tv_currentnum);
         TextView tv_totalnum = findViewById(R.id.tv_totalnum);
         TextView tv_sendbtn = findViewById(R.id.tv_sendbtn);
-        tv_sendbtn.setText(xB.b().a(getApplicationContext(), Helper.getResString(R.string.common_word_import).toUpperCase());
+        tv_sendbtn.setText(xB.b().a(getApplicationContext(), Helper.getResString(R.string.common_word_import).toUpperCase()));
         tv_sendbtn.setOnClickListener(this);
         TextView tv_samename = findViewById(R.id.tv_samename);
-        tv_samename.setText(xB.b().a(getApplicationContext(), Helper.getResString(R.string.design_manager_lottie_title_apply_same_naming));
+        tv_samename.setText(xB.b().a(getApplicationContext(), Helper.getResString(R.string.design_manager_lottie_title_apply_same_naming)));
         adapter = new ItemAdapter();
         RecyclerView recycler_list = findViewById(R.id.recycler_list);
         recycler_list.setAdapter(adapter);
@@ -184,7 +184,7 @@ public class ManageLottieImportActivity extends BaseAppCompatActivity implements
             }
         });
         Button btn_decide = findViewById(R.id.btn_decide);
-        btn_decide.setText(xB.b().a(getApplicationContext(), Helper.getResString(R.string.design_manager_change_name_button));
+        btn_decide.setText(xB.b().a(getApplicationContext(), Helper.getResString(R.string.design_manager_change_name_button)));
         btn_decide.setOnClickListener(this);
         lottie = findViewById(R.id.lottie);
     }
@@ -218,9 +218,9 @@ public class ManageLottieImportActivity extends BaseAppCompatActivity implements
             }
         }
         if (!duplicateCollections.isEmpty()) {
-            bB.b(getApplicationContext(), xB.b().a(getApplicationContext(), Helper.getResString(R.string.design_manager_message_collection_name_conflict), bB.TOAST_WARNING).show();
+            bB.b(getApplicationContext(), xB.b().a(getApplicationContext(), Helper.getResString(R.string.design_manager_message_collection_name_conflict), bB.TOAST_WARNING)).show();
         } else {
-            bB.a(getApplicationContext(), xB.b().a(getApplicationContext(), Helper.getResString(R.string.design_manager_message_collection_name_no_conflict), bB.TOAST_NORMAL).show();
+            bB.a(getApplicationContext(), xB.b().a(getApplicationContext(), Helper.getResString(R.string.design_manager_message_collection_name_no_conflict), bB.TOAST_NORMAL)).show();
         }
         selectedCollections = new ArrayList<>();
         selectedCollections.addAll(duplicateCollections);
@@ -332,4 +332,4 @@ public class ManageLottieImportActivity extends BaseAppCompatActivity implements
             }
         }
     }
-}
+    }
