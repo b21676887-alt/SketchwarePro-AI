@@ -112,7 +112,7 @@ public class MainActivity extends BasePermissionAppCompatActivity {
     public void g(int i) {
         if (i == 9501) {
             allFilesAccessCheck();
-            //restoreExternalTranslationSupport();
+            restoreExternalTranslationSupport();
             //maybeShowAdsNoticeIfDue(adsNoticeOpenCountForLaunch);
 
             refreshProjectBackedFragments();
@@ -191,7 +191,7 @@ public class MainActivity extends BasePermissionAppCompatActivity {
         enableEdgeToEdgeNoContrast();
         boolean hasStorageAccess = isStoragePermissionGranted();
         if (hasStorageAccess) {
-            //restoreExternalTranslationSupport();
+            restoreExternalTranslationSupport();
         }
 
         binding = MainBinding.inflate(getLayoutInflater());
