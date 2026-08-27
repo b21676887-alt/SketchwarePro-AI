@@ -51,6 +51,12 @@ public class wq {
     public static final String CUSTOM_COMPONENT_FILE = EXTRA_SYSTEM_DATA + File.separator + "component.json";
     public static final String EXTRA_DATA_EXPORT = EXTRA_SYSTEM_DATA + File.separator + "export";
     public static final String ANDROID_STUDIO_PROJECTS = ".sketcware_ide";
+    public static final String SYSTEM_I18N_PATH = EXTRA_SYSTEM_DATA + File.separator + "i18n";
+    
+    
+        public static String getSystemI18nPath() {
+        return getAbsolutePathOf(SYSTEM_I18N_PATH);
+    }
 
     public static String getAbsolutePathOf(String path) {
         return new File(Environment.getExternalStorageDirectory(), path).getAbsolutePath();

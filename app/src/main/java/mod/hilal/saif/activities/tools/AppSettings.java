@@ -110,6 +110,7 @@ public class AppSettings extends BaseAppCompatActivity {
         generalCategory.addLibraryItem(createPreference(R.drawable.ic_github, Helper.getResString(R.string.title_github_settings), Helper.getResString(R.string.subtitle_github_settings), new ActivityLauncher(new Intent(getApplicationContext(), GithubSettingsActivity.class))), true);
         generalCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_folder, Helper.getResString(R.string.title_open_working_directory), Helper.getResString(R.string.subtitle_open_working_directory), v -> openWorkingDirectory()), true);
         generalCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_apk_document, Helper.getResString(R.string.title_sign_apk_file), Helper.getResString(R.string.subtitle_sign_apk_file), v -> signApkFileDialog()), true);
+        generalCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_language, Helper.getResString(R.string.language_settings_title), Helper.getResString(R.string.language_settings_desc), openSettingsActivity(SettingsActivity.LANGUAGE_SETTINGS_FRAGMENT)), true);
         generalCategory.addLibraryItem(createPreference(R.drawable.ic_mtrl_settings, Helper.getResString(R.string.main_drawer_title_system_settings), Helper.getResString(R.string.subtitle_system_settings), new ActivityLauncher(new Intent(getApplicationContext(), SystemSettingActivity.class))), false);
 
         content.addView(managersCategory);

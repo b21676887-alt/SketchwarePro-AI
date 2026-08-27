@@ -112,7 +112,7 @@ public class MainActivity extends BasePermissionAppCompatActivity {
     public void g(int i) {
         if (i == 9501) {
             allFilesAccessCheck();
-            restoreExternalTranslationSupport();
+            //restoreExternalTranslationSupport();
             //maybeShowAdsNoticeIfDue(adsNoticeOpenCountForLaunch);
 
             refreshProjectBackedFragments();
@@ -191,7 +191,7 @@ public class MainActivity extends BasePermissionAppCompatActivity {
         enableEdgeToEdgeNoContrast();
         boolean hasStorageAccess = isStoragePermissionGranted();
         if (hasStorageAccess) {
-            restoreExternalTranslationSupport();
+            //restoreExternalTranslationSupport();
         }
 
         binding = MainBinding.inflate(getLayoutInflater());
@@ -353,7 +353,7 @@ public class MainActivity extends BasePermissionAppCompatActivity {
 
         donate.setOnClickListener(v -> {
             try {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(TranslationFunction.getString(this, R.string.link_donation_url)));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Helper.getResString(R.string.link_donation_url)));
                 startActivity(intent);
             } catch (Exception ignored) { }
             adsNoticeDialog.dismiss();
@@ -369,7 +369,7 @@ public class MainActivity extends BasePermissionAppCompatActivity {
         TextView donate = content.findViewById(R.id.donate);
         TextView close = content.findViewById(R.id.close);
 
-        String translatedTitle = TranslationFunction.getString(this, R.string.donation_dialog_title);
+        String translatedTitle = Helper.getResString(R.string.donation_dialog_title);
         if (donationImage != null) {
             donationImage.setContentDescription(translatedTitle);
         }
@@ -377,13 +377,13 @@ public class MainActivity extends BasePermissionAppCompatActivity {
             title.setText(translatedTitle);
         }
         if (body != null) {
-            body.setText(TranslationFunction.getString(this, R.string.donation_dialog_message));
+            body.setText(Helper.getResString(R.string.donation_dialog_message));
         }
         if (donate != null) {
-            donate.setText(TranslationFunction.getString(this, R.string.donation_button_donate));
+            donate.setText(Helper.getResString(R.string.donation_button_donate));
         }
         if (close != null) {
-            close.setText(TranslationFunction.getString(this, R.string.donation_button_cancel));
+            close.setText(Helper.getResString(R.string.donation_button_cancel));
         }
     }
 
@@ -605,10 +605,10 @@ public class MainActivity extends BasePermissionAppCompatActivity {
 
     private void showNoticeNeedStorageAccess() {
         MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this);
-        dialog.setTitle(TranslationFunction.getString(this, R.string.common_message_permission_title_storage));
+        dialog.setTitle(Helper.getResString(R.string.common_message_permission_title_storage));
         dialog.setIcon(R.drawable.color_about_96);
-        dialog.setMessage(TranslationFunction.getString(this, R.string.common_message_permission_need_load_project));
-        dialog.setPositiveButton(TranslationFunction.getString(this, R.string.common_word_ok), (v, which) -> {
+        dialog.setMessage(Helper.getResString(R.string.common_message_permission_need_load_project));
+        dialog.setPositiveButton(Helper.getResString(R.string.common_word_ok), (v, which) -> {
             v.dismiss();
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 9501);
         });
@@ -617,10 +617,10 @@ public class MainActivity extends BasePermissionAppCompatActivity {
 
     private void showNoticeNotEnoughFreeStorageSpace() {
         MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this);
-        dialog.setTitle(TranslationFunction.getString(this, R.string.common_message_insufficient_storage_space_title));
+        dialog.setTitle(Helper.getResString(R.string.common_message_insufficient_storage_space_title));
         dialog.setIcon(R.drawable.high_priority_96_red);
-        dialog.setMessage(TranslationFunction.getString(this, R.string.common_message_insufficient_storage_space));
-        dialog.setPositiveButton(TranslationFunction.getString(this, R.string.common_word_ok), null);
+        dialog.setMessage(Helper.getResString(R.string.common_message_insufficient_storage_space));
+        dialog.setPositiveButton(Helper.getResString(R.string.common_word_ok), null);
         dialog.show();
     }
 
