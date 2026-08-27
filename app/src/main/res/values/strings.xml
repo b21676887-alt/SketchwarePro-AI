@@ -3141,4 +3141,13 @@ Do you want to continue?</string>
     <string name="link_about_teamm">https://raw.githubusercontent.com/b21676887-alt/SketchwarePro-AI/main/about.json</string>
     <string name="groq_api_key_configure">Configure API Key</string>
     <string name="groq_api_error_generic">An error occurred while processing your request</string>
+    <string name="design_menu_transcribe_to_Material">Transcribe to Material 3</string>
+    <string name="design_menu_reset_layout">Reset Root Layout</string>
+    <string name="design_menu_show_signatures">Show Apk signatures</string>
+    <string name="design_menu_xml_editor">Direct XML editor</string>
+    <string name="design_menu_show_last_error">Show last compile error</string>
+    <string name="design_menu_show_source">Show source code</string>
+    <string name="design_menu_install_apk">Install last built APK</string>
+    <string name="design_menu_build_settings">Build Settings</string>
+    <string name="design_menu_clean_temp">Clean temporary files</string>
 </resources>
