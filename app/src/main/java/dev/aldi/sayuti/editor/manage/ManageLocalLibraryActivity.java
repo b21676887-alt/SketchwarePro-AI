@@ -208,7 +208,7 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
                     deleteSelectedLocalLibraries(scId, adapter.getLocalLibraries(), projectUsedLibsCopy);
                     runOnUiThread(() -> {
                         h();
-                        SketchwareUtil.toast(getString(R.string.deleted_successfully));
+                        SketchwareUtil.toast(Helper.getResString(R.string.deleted_successfully));
                         adapter.isSelectionModeEnabled = false;
                         collapseContextualToolbar();
                         runLoadLocalLibrariesTask();
@@ -283,9 +283,9 @@ public class ManageLocalLibraryActivity extends BaseAppCompatActivity {
     private void showOptionsMenu(View anchorView) {
         androidx.appcompat.widget.PopupMenu popupMenu = new androidx.appcompat.widget.PopupMenu(this, anchorView);
 
-        popupMenu.getMenu().add(0, 1, 0, getString(R.string.manage_libs_reload));
-popupMenu.getMenu().add(0, 2, 1, getString(R.string.manage_libs_select_all));
-popupMenu.getMenu().add(0, 3, 2, getString(R.string.manage_libs_manage_repos));
+        popupMenu.getMenu().add(0, 1, 0, Helper.getResString(R.string.manage_libs_reload));
+popupMenu.getMenu().add(0, 2, 1, Helper.getResString(R.string.manage_libs_select_all));
+popupMenu.getMenu().add(0, 3, 2, Helper.getResString(R.string.manage_libs_manage_repos));
 
         popupMenu.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
@@ -427,8 +427,8 @@ popupMenu.getMenu().add(0, 3, 2, getString(R.string.manage_libs_manage_repos));
 
         TextInputLayout nameLayout = new TextInputLayout(this, null,
                 com.google.android.material.R.attr.textInputOutlinedStyle);
-        nameLayout.setHint(getString(R.string.dialog_repo_name_hint));
-        nameLayout.setPlaceholderText(getString(R.string.dialog_repo_name_placeholder));
+        nameLayout.setHint(Helper.getResString(R.string.dialog_repo_name_hint));
+        nameLayout.setPlaceholderText(Helper.getResString(R.string.dialog_repo_name_placeholder));
         TextInputEditText nameInput = new TextInputEditText(nameLayout.getContext());
         nameInput.setText(currentName);
         nameInput.setSingleLine(true);
@@ -436,8 +436,8 @@ popupMenu.getMenu().add(0, 3, 2, getString(R.string.manage_libs_manage_repos));
 
         TextInputLayout urlLayout = new TextInputLayout(this, null,
                 com.google.android.material.R.attr.textInputOutlinedStyle);
-        urlLayout.setHint(getString(R.string.dialog_repo_url_hint));
-        urlLayout.setPlaceholderText(getString(R.string.dialog_repo_url_placeholder));
+        urlLayout.setHint(Helper.getResString(R.string.dialog_repo_url_hint));
+        urlLayout.setPlaceholderText(Helper.getResString(R.string.dialog_repo_url_placeholder));
         TextInputEditText urlInput = new TextInputEditText(urlLayout.getContext());
         urlInput.setText(currentUrl);
         urlInput.setSingleLine(true);
@@ -467,15 +467,15 @@ popupMenu.getMenu().add(0, 3, 2, getString(R.string.manage_libs_manage_repos));
             String url = urlInput.getText() != null ? urlInput.getText().toString().trim() : "";
 
             if (name.isEmpty()) {
-                nameLayout.setError(getString(R.string.dialog_repo_error_name_required));
+                nameLayout.setError(Helper.getResString(R.string.dialog_repo_error_name_required));
                 return;
             }
             if (url.isEmpty()) {
-                urlLayout.setError(getString(R.string.dialog_repo_error_url_required));
+                urlLayout.setError(Helper.getResString(R.string.dialog_repo_error_url_required));
                 return;
             }
             if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                urlLayout.setError(getString(R.string.dialog_repo_error_url_invalid));
+                urlLayout.setError(Helper.getResString(R.string.dialog_repo_error_url_invalid));
                 return;
             }
             if (url.endsWith("/")) url = url.substring(0, url.length() - 1);
@@ -498,7 +498,7 @@ popupMenu.getMenu().add(0, 3, 2, getString(R.string.manage_libs_manage_repos));
 
     private void showDeleteRepoDialog(String repoName, int index) {
         new MaterialAlertDialogBuilder(this)
-                .setMessage(String.format(getString(R.string.dialog_repo_delete_confirm), repoName))
+                .setMessage(String.format(Helper.getResString(R.string.dialog_repo_delete_confirm), repoName))
                 .setPositiveButton(R.string.common_word_delete, (d, w) -> {
                     ArrayList<HashMap<String, Object>> repos = loadCustomRepos();
                     if (index < repos.size()) {
@@ -741,7 +741,7 @@ popupMenu.getMenu().add(0, 3, 2, getString(R.string.manage_libs_manage_repos));
             }
             if (library.isSelected() && isUsedLibrary(library.getName())) {
                 new MaterialAlertDialogBuilder(ManageLocalLibraryActivity.this)
-                        .setTitle(getString(R.string.warning_title)) .setMessage(String.format(getString(R.string.warning_remove_used_library_message), library.getName()))
+                        .setTitle(Helper.getResString(R.string.warning_title)) .setMessage(String.format(Helper.getResString(R.string.warning_remove_used_library_message), library.getName()))
                         .setPositiveButton(Helper.getResString(R.string.common_word_yes), (dialog, which) -> dialog.dismiss())
                         .setNegativeButton(Helper.getResString(R.string.common_word_cancel), (dialog, which) -> {
                             toggleLocalLibrary(card, library, onLocalLibrarySelectedStateChangedListener);
