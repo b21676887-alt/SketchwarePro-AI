@@ -138,15 +138,15 @@ public class ExcludeBuiltInLibrariesActivity extends BaseAppCompatActivity {
     }
 
     public static String getItemTitle() {
-        return "Exclude built-in libraries";
+        return Helper.getResString(R.string.library_title_exclude);
     }
 
     public static String getDefaultItemDescription() {
-        return "Use custom Library versions";
+        return Helper.getResString(R.string.library_default_description);
     }
 
     public static String getSelectedLibrariesItemDescription() {
-        return "%1$d/%2$d built-in libraries excluded";
+        return Helper.getResString(R.string.library_excluded_count);
     }
 
     @Override
@@ -169,7 +169,7 @@ public class ExcludeBuiltInLibrariesActivity extends BaseAppCompatActivity {
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Exclude built-in libraries");
+        getSupportActionBar().setTitle(Helper.getResString(R.string.library_title_exclude));
         binding.toolbar.setNavigationOnClickListener(view -> onBackPressed());
 
         binding.tvEnable.setText(Helper.getResString(R.string.design_library_settings_title_enabled));
@@ -277,7 +277,7 @@ public class ExcludeBuiltInLibrariesActivity extends BaseAppCompatActivity {
         MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this);
         dialog.setIcon(R.drawable.rollback_96);
         dialog.setTitle(Helper.getResString(R.string.common_word_reset));
-        dialog.setMessage("Reset excluded built-in libraries? This action cannot be undone.");
+        dialog.setMessage(Helper.getResString(R.string.library_msg_reset_confirm));
         dialog.setPositiveButton(Helper.getResString(R.string.common_word_reset), (v, which) -> {
             saveConfig(sc_id, false, Collections.emptyList());
             binding.libSwitch.setChecked(false);
@@ -293,7 +293,7 @@ public class ExcludeBuiltInLibrariesActivity extends BaseAppCompatActivity {
         DialogSelectLibrariesBinding binding = DialogSelectLibrariesBinding.inflate(getLayoutInflater());
 
         MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this);
-        dialog.setTitle("Select built-in libraries");
+        dialog.setTitlHelper.getResString(R.string.library_title_select));
 
         // magic to initialize scrollbars even without android:scrollbars defined in XML
         // https://stackoverflow.com/a/48698300/10929762

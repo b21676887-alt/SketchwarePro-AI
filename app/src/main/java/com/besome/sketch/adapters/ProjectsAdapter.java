@@ -257,13 +257,13 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.Projec
     private void bindProjectType(ProjectViewHolder holder, HashMap<String, Object> projectMap) {
         boolean androidStudioProject = lC.isAndroidStudioProject(projectMap);
         if (androidStudioProject) {
-            holder.binding.projectTypeBadge.setText(R.string.project_type_android_studio);
+            holder.binding.projectTypeBadge.setText(Helper.getResString(R.string.project_type_android_studio));
             holder.binding.projectTypeBadge.setTextColor(ContextCompat.getColor(activity, R.color.chat_accent));
             holder.binding.projectTypeBadge.setBackgroundResource(R.drawable.bg_chat_status_chip);
             holder.binding.imgIconView.setStrokeColor(ContextCompat.getColor(activity, R.color.chat_accent));
             holder.binding.imgIconView.setStrokeWidth(dp(1));
         } else {
-            holder.binding.projectTypeBadge.setText(R.string.project_type_native);
+            holder.binding.projectTypeBadge.setText(Helper.getResString(R.string.project_type_native));
             holder.binding.projectTypeBadge.setTextColor(ContextCompat.getColor(activity, R.color.chat_text_secondary));
             holder.binding.projectTypeBadge.setBackgroundResource(R.drawable.bg_chat_thread_badge);
             holder.binding.imgIconView.setStrokeColor(ContextCompat.getColor(activity, R.color.chat_border));
@@ -376,10 +376,10 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.Projec
 
         if (isPinned(projectMap)) {
             binding.pinIcon.setImageResource(R.drawable.ic_mtrl_unpin);
-            binding.pinText.setText(R.string.project_options_unpin);
+            binding.pinText.setText(Helper.getResString(R.string.project_options_unpin));
         } else {
             binding.pinIcon.setImageResource(R.drawable.ic_mtrl_pin);
-            binding.pinText.setText(R.string.project_options_pin);
+            binding.pinText.setText(Helper.getResString(R.string.project_options_pin));
         }
 
         projectOptionsBSD.show();

@@ -1352,7 +1352,8 @@ Choosing a theme mode lets you personalize the app\'s appearance, notes:\n
 2. This setting also affects the EditorView, eg: with DayNight enabled, the editor colors will follow the system\'s theme and switch between light and dark accordingly.
 </string>
     <string name="design_library_dynamic_colors_description">Enabling Dynamic Colors allows your app to adapt its color scheme based on the user\'s system preferences, creating a seamless and personalized experience that reflects the user\'s chosen theme and appearance.</string>
-    <string name="design_library_title_material3">"Material3 Manager"</string>
+    <string name="design_library_title_material3">Material3 Manager</string>
+    <string name="design_library_description_material3">Modern Material design with adaptive dynamic theming</string>
     <string name="design_library_appcompat_need_firebase_disable">You can not disable the AppCompat Library when Firebase is in use.</string>
     <string name="design_library_appcompat_need_m3_disable">You can not disable the AppCompat Library when Material3 and Dynamic Colors is in use.</string>
     <string name="design_library_button_import_from_other_project">Import from the other project</string>
@@ -3150,4 +3151,10 @@ Do you want to continue?</string>
     <string name="design_menu_install_apk">Install last built APK</string>
     <string name="design_menu_build_settings">Build Settings</string>
     <string name="design_menu_clean_temp">Clean temporary files</string>
+        <string name="library_msg_reset_confirm">Reset excluded built-in libraries? This action cannot be undone.</string>
+    <string name="library_remove_warning_msg">This library \"%s\" is already used in your project, removing it may break your project. Do you want to continue removing it?</string>
+    <string name="library_title_exclude">Exclude built-in libraries</string>
+    <string name="library_title_select">Select built-in libraries</string>
+    <string name="library_default_description">Use custom Library versions</string>
+    <string name="library_excluded_count">%1$d/%2$d built-in libraries excluded</string>
 </resources>
