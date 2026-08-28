@@ -67,8 +67,8 @@ public class LanguageSettingsFragment extends qA {
         UI.addSystemWindowInsetToPadding(binding.content, true, false, true, true);
     }
 
-    private static final String[] LOCALE_TAGS = {"", "en", "zh"};
-    private static final String[] DISPLAY_NAMES = {"", "English", "中文"};
+    private static final String[] LOCALE_TAGS = {"", "en", "zh", "ar"};
+    private static final String[] DISPLAY_NAMES = {"", "English", "中文", "عربي"};
 
     private int getCurrentLocaleIndex() {
         LocaleListCompat currentLocales = AppCompatDelegate.getApplicationLocales();
