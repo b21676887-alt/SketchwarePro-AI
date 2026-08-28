@@ -293,7 +293,7 @@ public class ExcludeBuiltInLibrariesActivity extends BaseAppCompatActivity {
         DialogSelectLibrariesBinding binding = DialogSelectLibrariesBinding.inflate(getLayoutInflater());
 
         MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this);
-        dialog.setTitlHelper.getResString(R.string.library_title_select));
+        dialog.setTitl(Helper.getResString(R.string.library_title_select));
 
         // magic to initialize scrollbars even without android:scrollbars defined in XML
         // https://stackoverflow.com/a/48698300/10929762
