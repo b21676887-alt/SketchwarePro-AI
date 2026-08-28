@@ -107,24 +107,24 @@ public class ProjectLibraryBean implements Parcelable {
 
     public static int getLibraryResDesc(int i) {
         return switch (i) {
-            case 0 -> Helper.getResString(R.string.design_library_description_firebase);
-            case 1 -> Helper.getResString(R.string.design_library_description_appcompat_and_design);
-            case 2 -> Helper.getResString(R.string.design_library_description_admob);
-            case 3 -> Helper.getResString(R.string.design_library_description_google_map);
-            case 4 -> Helper.getResString(R.string.text_subtitle_menu_local_library);
-            case 5 -> Helper.getResString(R.string.design_drawer_menu_nativelibs_subtitle);
+            case 0 -> R.string.design_library_description_firebase;
+            case 1 -> R.string.design_library_description_appcompat_and_design;
+            case 2 -> R.string.design_library_description_admob;
+            case 3 -> R.string.design_library_description_google_map;
+            case 4 -> R.string.text_subtitle_menu_local_library;
+            case 5 -> R.string.design_drawer_menu_nativelibs_subtitle;
             default -> 0;
         };
     }
     
     public static int getLibraryResName(int i) {
         return switch (i) {
-            case 0 -> Helper.getResString(R.string.design_library_firebase_title_firebase);
-            case 1 -> Helper.getResString(R.string.design_library_title_appcompat_and_design);
-            case 2 -> Helper.getResString(R.string.design_library_admob_title_admob);
-            case 3 -> Helper.getResString(R.string.design_library_google_map_title);
-            case 4 -> Helper.getResString(R.string.text_title_menu_local_library);
-            case 5 -> Helper.getResString(R.string.design_drawer_menu_nativelibs);
+            case 0 -> R.string.design_library_firebase_title_firebase;
+            case 1 -> R.string.design_library_title_appcompat_and_design;
+            case 2 -> R.string.design_library_admob_title_admob;
+            case 3 -> R.string.design_library_google_map_title;
+            case 4 -> R.string.text_title_menu_local_library;
+            case 5 -> R.string.design_drawer_menu_nativelibs;
             default -> 0;
         };
     }
