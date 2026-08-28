@@ -31,10 +31,10 @@ public class SketchApplication extends Application {
         return mApplicationContext;
     }
     
-    @Override
-    public Resources getResources() {
-        return TranslationFunction.wrapResources(this, super.getResources());
-    }
+    //@Override
+   // public Resources getResources() {
+       // return TranslationFunction.wrapResources(this, super.getResources());
+  //  }
 
     public static Context getContext() {
         if (currentActivity != null) {
