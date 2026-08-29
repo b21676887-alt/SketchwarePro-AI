@@ -2302,6 +2302,14 @@
     <string name="menu_webservice">خدمة الويب</string>
     <string name="menu_iachat">المحادثة</string>
     <string name="menu_undo">تراجع</string>
+    <string name="menu_select_all">تحديد الكل</string>
+
+    <!-- نسخ افتراضية للقيم التي ظهرت في التحذيرات (اضبط النصوص حسب الحاجة) -->
+    <string name="about_badge_contributor">المساهم</string>
+    <string name="xml_command_confirmation_title">تأكيد</string>
+    <string name="xml_command_enable_new_message">تمكين رسالة جديدة</string>
+    <string name="xml_command_select_xml">اختر XML</string>
+    <string name="xml_command_title">أمر XML</string>
     <string name="menu_import_xml">استيراد XML</string>
     <string name="menu_import_xml_title">استيراد تخطيط XML</string>
     <string name="menu_import_xml_layout_hint">الصق كود تخطيط XML هنا</string>

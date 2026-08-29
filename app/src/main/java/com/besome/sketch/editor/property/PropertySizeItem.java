@@ -16,7 +16,6 @@ import a.a.a.wB;
 import mod.hey.studios.util.Helper;
 import pro.sketchware.R;
 import pro.sketchware.lib.validator.MinMaxInputValidator;
-import pro.sketchware.utility.TranslationFunction;
 
 @SuppressLint("ViewConstructor")
 public class PropertySizeItem extends RelativeLayout implements View.OnClickListener {

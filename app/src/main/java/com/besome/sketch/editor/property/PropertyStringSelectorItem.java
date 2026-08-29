@@ -20,7 +20,6 @@ import a.a.a.sq;
 import a.a.a.wB;
 import mod.hey.studios.util.Helper;
 import pro.sketchware.R;
-import pro.sketchware.utility.TranslationFunction;
 
 @SuppressLint("ViewConstructor")
 public class PropertyStringSelectorItem extends RelativeLayout implements View.OnClickListener {
