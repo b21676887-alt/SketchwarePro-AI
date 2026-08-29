@@ -52,9 +52,10 @@ public class BackupRestoreManager {
 
     public static String getRestoreIntegratedLocalLibrariesMessage(boolean restoringMultipleBackups, int currentRestoringIndex, int totalAmountOfBackups, String filename) {
         if (!restoringMultipleBackups) {
-            return "Looks like the backup file you selected contains some Local libraries. Do you want to copy them to your local_libs directory (if they do not already exist)?";
+            return Helper.getResString(R.string.backup_restore_local_libs_single);
         } else {
-            return "Looks like backup file " + filename + " (" + (currentRestoringIndex + 1) + " out of " + totalAmountOfBackups + ") contains some Local libraries. Do you want to copy them to your local_libs directory (if they do not already exist)?";
+            return String.format(Helper.getResString(R.string.backup_restore_local_libs_multi),
+                    filename, currentRestoringIndex + 1, totalAmountOfBackups);
         }
     }
 
@@ -67,7 +68,7 @@ public class BackupRestoreManager {
 
         MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(act);
         dialog.setIcon(R.drawable.ic_backup);
-        dialog.setTitle("Backup Options");
+        dialog.setTitle(R.string.backup_title_options);
 
         LinearLayout checkboxContainer = new LinearLayout(act);
         checkboxContainer.setOrientation(LinearLayout.VERTICAL);
@@ -99,7 +100,7 @@ public class BackupRestoreManager {
 
         CheckBox includeLocalLibraries = new CheckBox(act);
         includeLocalLibraries.setTag(localLibrariesTag);
-        includeLocalLibraries.setText("Include used Local libraries");
+        includeLocalLibraries.setText(R.string.backup_include_local_libs);
         includeLocalLibraries.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -108,7 +109,7 @@ public class BackupRestoreManager {
 
         CheckBox includeUsedCustomBlocks = new CheckBox(act);
         includeUsedCustomBlocks.setTag(customBlocksTag);
-        includeUsedCustomBlocks.setText("Include used Custom Blocks");
+        includeUsedCustomBlocks.setText(R.string.backup_include_custom_blocks);
         includeUsedCustomBlocks.setLayoutParams(new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -116,7 +117,7 @@ public class BackupRestoreManager {
         checkboxContainer.addView(includeUsedCustomBlocks);
 
         dialog.setView(checkboxContainer);
-        dialog.setPositiveButton("Back up", (v, which) -> {
+        dialog.setPositiveButton(R.string.backup_button_back_up, (v, which) -> {
             v.dismiss();
             doBackup(sc_id, project_name);
         });
@@ -139,7 +140,7 @@ public class BackupRestoreManager {
         FilePickerOptions options = new FilePickerOptions();
         options.setMultipleSelection(true);
         options.setExtensions(new String[]{BackupFactory.EXTENSION, BackupFactory.ANDROID_STUDIO_EXTENSION});
-        options.setTitle("Select backups to restore (" + BackupFactory.EXTENSION + " or " + BackupFactory.ANDROID_STUDIO_EXTENSION + ")");
+        options.setTitle(String.format(Helper.getResString(R.string.backup_select_to_restore), BackupFactory.EXTENSION + " or " + BackupFactory.ANDROID_STUDIO_EXTENSION));
 
         FilePickerCallback callback = new FilePickerCallback() {
             @Override
@@ -153,7 +154,7 @@ public class BackupRestoreManager {
                         boolean restoringMultipleBackups = files.size() > 1;
 
                         new MaterialAlertDialogBuilder(act)
-                                .setTitle("Warning")
+                                .setTitle(R.string.common_word_warning)
                                 .setMessage(getRestoreIntegratedLocalLibrariesMessage(restoringMultipleBackups, i, files.size(),
                                         FileUtil.getFileNameNoExtension(backupFilePath)))
                                 .setPositiveButton("Copy", (dialog, which) -> doRestore(backupFilePath, true))
@@ -209,9 +210,9 @@ public class BackupRestoreManager {
             if (activity != null && !activity.isFinishing()) {
                 activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 ProgressMsgBoxBinding loadingDialogBinding = ProgressMsgBoxBinding.inflate(LayoutInflater.from(activity));
-                loadingDialogBinding.tvProgress.setText("Creating backup...");
+                loadingDialogBinding.tvProgress.setText(R.string.backup_msg_creating);
                 dlg = new MaterialAlertDialogBuilder(activity)
-                        .setTitle("Please wait")
+                        .setTitle(R.string.common_word_please_wait)
                         .setCancelable(false)
                         .setView(loadingDialogBinding.getRoot())
                         .create();
@@ -241,11 +242,11 @@ public class BackupRestoreManager {
             if (dlg != null && dlg.isShowing()) {
                 dlg.dismiss();
             }
-
+            
             if (bm != null && bm.getOutFile() != null) {
-                SketchwareUtil.toast("Successfully created backup to: " + bm.getOutFile().getAbsolutePath());
-            } else if (bm != null) {
-                SketchwareUtil.toastError("Error: " + bm.error, Toast.LENGTH_LONG);
+                SketchwareUtil.toast(String.format(Helper.getResString(R.string.backup_msg_success), bm.getOutFile().getAbsolutePath()));
+            } else {
+                SketchwareUtil.toastError(String.format(Helper.getResString(R.string.backup_error_prefix), bm.error), Toast.LENGTH_LONG);
             }
         }
     }
@@ -270,9 +271,9 @@ public class BackupRestoreManager {
             if (activity != null && !activity.isFinishing()) {
                 activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 ProgressMsgBoxBinding loadingDialogBinding = ProgressMsgBoxBinding.inflate(LayoutInflater.from(activity));
-                loadingDialogBinding.tvProgress.setText("Creating backup...");
+                loadingDialogBinding.tvProgress.setText(R.string.backup_msg_creating);
                 dlg = new MaterialAlertDialogBuilder(activity)
-                        .setTitle("Please wait")
+                        .setTitle(R.string.common_word_please_wait)
                         .setCancelable(false)
                         .setView(loadingDialogBinding.getRoot())
                         .create();
@@ -298,9 +299,9 @@ public class BackupRestoreManager {
             }
 
             if (bm != null && bm.getOutFile() != null) {
-                SketchwareUtil.toast("Successfully created backup to: " + bm.getOutFile().getAbsolutePath());
-            } else if (bm != null) {
-                SketchwareUtil.toastError("Error: " + bm.error, Toast.LENGTH_LONG);
+                SketchwareUtil.toast(String.format(Helper.getResString(R.string.backup_msg_success), bm.getOutFile().getAbsolutePath()));
+            } else {
+                SketchwareUtil.toastError(String.format(Helper.getResString(R.string.backup_error_prefix), bm.error), Toast.LENGTH_LONG);
             }
         }
     }
@@ -328,9 +329,9 @@ public class BackupRestoreManager {
             if (activity != null && !activity.isFinishing()) {
                 activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 ProgressMsgBoxBinding loadingDialogBinding = ProgressMsgBoxBinding.inflate(LayoutInflater.from(activity));
-                loadingDialogBinding.tvProgress.setText("Restoring...");
+                loadingDialogBinding.tvProgress.setText(R.string.backup_msg_restoring);
                 dlg = new MaterialAlertDialogBuilder(activity)
-                        .setTitle("Please wait")
+                        .setTitle(R.string.common_word_please_wait)
                         .setCancelable(false)
                         .setView(loadingDialogBinding.getRoot())
                         .create();
@@ -364,12 +365,12 @@ public class BackupRestoreManager {
             }
 
             if (bm != null && (!bm.isRestoreSuccess() || error)) {
-                SketchwareUtil.toastError("Couldn't restore: " + bm.error, Toast.LENGTH_LONG);
+               SketchwareUtil.toastError(String.format(Helper.getResString(R.string.backup_error_restore), bm.error), Toast.LENGTH_LONG);
             } else if (projectsFragment != null) {
                 projectsFragment.refreshProjectsList();
-                SketchwareUtil.toast("Restored successfully");
+                SketchwareUtil.toast(Helper.getResString(R.string.backup_toast_restored));
             } else {
-                SketchwareUtil.toast("Restored successfully. Refresh to see the project", Toast.LENGTH_LONG);
+                SketchwareUtil.toast(Helper.getResString(R.string.backup_toast_restored_refresh), Toast.LENGTH_LONG);
             }
         }
     }
@@ -395,9 +396,9 @@ public class BackupRestoreManager {
             if (activity != null && !activity.isFinishing()) {
                 activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 ProgressMsgBoxBinding loadingDialogBinding = ProgressMsgBoxBinding.inflate(LayoutInflater.from(activity));
-                loadingDialogBinding.tvProgress.setText("Restoring...");
+                loadingDialogBinding.tvProgress.setText(R.string.backup_msg_restoring);
                 dlg = new MaterialAlertDialogBuilder(activity)
-                        .setTitle("Please wait")
+                        .setTitle(R.string.common_word_please_wait)
                         .setCancelable(false)
                         .setView(loadingDialogBinding.getRoot())
                         .create();
@@ -430,12 +431,12 @@ public class BackupRestoreManager {
             }
 
             if (bm != null && (!bm.isRestoreSuccess() || error)) {
-                SketchwareUtil.toastError("Couldn't restore: " + bm.error, Toast.LENGTH_LONG);
+                SketchwareUtil.toastError(String.format(Helper.getResString(R.string.backup_error_restore), bm.error), Toast.LENGTH_LONG);
             } else if (projectsFragment != null) {
                 projectsFragment.refreshProjectsList();
-                SketchwareUtil.toast("Restored successfully");
+                SketchwareUtil.toast(Helper.getResString(R.string.backup_toast_restored));
             } else {
-                SketchwareUtil.toast("Restored successfully. Refresh to see the project", Toast.LENGTH_LONG);
+                SketchwareUtil.toast(Helper.getResString(R.string.backup_toast_restored_refresh), Toast.LENGTH_LONG);
             }
         }
     }
