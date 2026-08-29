@@ -172,7 +172,6 @@ public class PropertyAttributesItem extends LinearLayout implements View.OnClick
         dialog.show();
 
         binding.viewId.setText(bean.id);
-        binding.shortcuts.setVisibility(View.GONE);
 
         var adapter = new AttributesAdapter();
         binding.recyclerView.setAdapter(adapter);

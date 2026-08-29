@@ -18,6 +18,7 @@ import a.a.a.mB;
 import a.a.a.wB;
 import mod.hey.studios.util.Helper;
 import pro.sketchware.R;
+import pro.sketchware.utility.TranslationFunction;
 
 @SuppressLint("ViewConstructor")
 public class PropertyColorItem extends RelativeLayout implements View.OnClickListener {
@@ -71,16 +72,8 @@ public class PropertyColorItem extends RelativeLayout implements View.OnClickLis
     public void setValue(int value) {
         this.value = value;
         resValue = null;
-        if (value == 0) {
-            tvValue.setText("TRANSPARENT");
-            viewColor.setBackgroundColor(value);
-        } else if (value == 0xffffff) {
-            tvValue.setText("NONE");
-            viewColor.setBackgroundColor(value);
-        } else {
-            tvValue.setText(String.format("#%08X", value));
-            viewColor.setBackgroundColor(value);
-        }
+        tvValue.setText(displayValueForRawColor(value));
+        viewColor.setBackgroundColor(value);
     }
 
     public String getResValue() {
@@ -90,14 +83,26 @@ public class PropertyColorItem extends RelativeLayout implements View.OnClickLis
     public void setValue(int value, String resValue) {
         this.value = value;
         this.resValue = resValue;
-        if (value == 0) {
-            tvValue.setText("TRANSPARENT");
-        } else if (value == 0xffffff) {
-            tvValue.setText("NONE");
+        if (hasColorReference()) {
+            tvValue.setText(this.resValue);
         } else {
-            tvValue.setText(resValue);
+            tvValue.setText(displayValueForRawColor(value));
         }
         viewColor.setBackgroundColor(value);
+    }
+
+    private String displayValueForRawColor(int value) {
+        if (value == 0) {
+            return "TRANSPARENT";
+        }
+        if (value == 0xffffff) {
+            return "NONE";
+        }
+        return String.format("#%08X", value);
+    }
+
+    private boolean hasColorReference() {
+        return resValue != null && !resValue.trim().isEmpty() && !"null".equalsIgnoreCase(resValue.trim());
     }
 
     @Override
@@ -143,10 +148,13 @@ public class PropertyColorItem extends RelativeLayout implements View.OnClickLis
     private void showColorPicker(View anchorView) {
         String tvValueStr = tvValue.getText().toString();
         String color;
-        if (tvValueStr.equals("NONE") || tvValueStr.equals("TRANSPARENT")) {
+        if (hasColorReference()) {
+            color = resValue;
+        } else if (tvValueStr.equals("NONE") || tvValueStr.equals("TRANSPARENT")) {
             color = tvValueStr;
-        } else
+        } else {
             color = Objects.requireNonNullElseGet(resValue, () -> String.format("#%06X", value));
+        }
 
         ColorPickerDialog colorPicker = new ColorPickerDialog((Activity) context, color, key.equals("property_background_color"), true, sc_id);
         colorPicker.a(new ColorPickerDialog.b() {

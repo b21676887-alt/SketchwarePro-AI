@@ -14,6 +14,7 @@ import a.a.a.mB;
 import a.a.a.wB;
 import mod.hey.studios.util.Helper;
 import pro.sketchware.R;
+import pro.sketchware.utility.TranslationFunction;
 
 @SuppressLint("ViewConstructor")
 public class PropertySwitchSingleLineItem extends LinearLayout implements View.OnClickListener {
