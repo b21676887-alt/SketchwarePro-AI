@@ -36,6 +36,14 @@
                 tools:text="linear1" />
 
         </LinearLayout>
+        
+        <ImageView
+            android:id="@+id/shortcuts"
+            android:layout_width="@dimen/mtrl_min_touch_target_size"
+            android:layout_height="@dimen/mtrl_min_touch_target_size"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_mtrl_bookmark" />
 
         <ImageView
             android:id="@+id/add"
@@ -47,16 +55,6 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="centerInside"
             tools:ignore="PrivateResource" />
-                        
-        <ImageView
-            android:id="@+id/source_code"
-            android:layout_width="@dimen/mtrl_min_touch_target_size"
-            android:layout_height="@dimen/mtrl_min_touch_target_size"
-            android:background="?selectableItemBackgroundBorderless"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_mtrl_code"
-            android:visibility="gone"
-            tools:visibility="visible" />
 
         <ImageView
             android:id="@+id/source_code"
