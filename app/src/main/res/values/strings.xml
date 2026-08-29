@@ -3227,6 +3227,14 @@ Do you want to continue?</string>
     <string name="sort_by_id">Sort by ID</string>
     <string name="sort_by_name">Sort by Project Name</string>
     <string name="sort_descending">Descending (Z-A)</string>
+    <string name="menu_select_all">Select All</string>
+
+    <!-- نسخ افتراضية للقيم التي ظهرت في التحذيرات (اضبط النصوص حسب الحاجة) -->
+    <string name="about_badge_contributor">Contributor</string>
+    <string name="xml_command_confirmation_title">to be sure</string>
+    <string name="xml_command_enable_new_message">تمكين رسالة جديدة</string>
+    <string name="xml_command_select_xml">Select XML</string>
+    <string name="xml_command_title">command XML</string>
         <!-- ========== 备份与恢复 (Backup & Restore) ========== -->
     <string name="backup_button_back_up">Back up</string>
     <string name="backup_button_copy_libs">Copy</string>
