@@ -2864,7 +2864,7 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
 						// 3. إدراج البلوك في الحدث الحالي وتحديث الواجهة
 						if (o != null) {
 							// إضافة البلوك إلى شجرة البلوكات في EventBean
-							o.add(newBlock);
+							o.a(newBlock);
 							
 							// إعادة تحميل واجهة البلوكات في LogicEditorActivity
 							if (o != null) {
