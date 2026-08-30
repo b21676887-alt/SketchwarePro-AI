@@ -2862,7 +2862,7 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
 						newBlock.parameters.add(generatedCode);
 						
 						// 3. إدراج البلوك في الحدث الحالي وتحديث الواجهة
-						if (eventBean != null) {
+						if (o != null) {
 							// إضافة البلوك إلى شجرة البلوكات في EventBean
 							o.add(newBlock);
 							
