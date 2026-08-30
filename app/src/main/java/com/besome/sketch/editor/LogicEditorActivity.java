@@ -135,6 +135,7 @@ import pro.sketchware.utility.SvgUtils;
 import pro.sketchware.utility.TranslationFunction;
 import pro.sketchware.logic.LogicSyntaxChecker;
 import pro.sketchware.ia.GeradorDeLogic;
+import androidx.appcompat.app.AlertDialog;
 
 @SuppressLint({"ClickableViewAccessibility", "RtlHardcoded", "SetTextI18n", "DefaultLocale"})
 public class LogicEditorActivity extends BaseAppCompatActivity implements View.OnClickListener, Vs, View.OnTouchListener, MoreblockImporterDialog.CallBack {
@@ -2581,6 +2582,8 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
 		});
 	}
 	
+	
+	
 	public void t() {
 		fa = ObjectAnimator.ofFloat(O, View.TRANSLATION_X, 0.0f);
 		fa.setDuration(500L);
@@ -2755,9 +2758,6 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
 			TextInputEditText promptInput = dialogView.findViewById(R.id.input_text);
 			TextInputLayout promptContainer = dialogView.findViewById(R.id.input_layout_container);
 			
-			// إخفاء خيارات الصور والتخطيط في حال كانت النافذة مشتركة
-			View imageSection = dialogView.findViewById(R.id.reference_image_layout);
-			if (imageSection != null) imageSection.setVisibility(View.GONE);
 			
 			var dialog = new MaterialAlertDialogBuilder(this)
 			.setTitle("توليد أكواد Logic بالذكاء الاصطناعي")
@@ -2864,11 +2864,11 @@ public class LogicEditorActivity extends BaseAppCompatActivity implements View.O
 						// 3. إدراج البلوك في الحدث الحالي وتحديث الواجهة
 						if (eventBean != null) {
 							// إضافة البلوك إلى شجرة البلوكات في EventBean
-							eventBean.targetBlocks.add(newBlock);
+							o.targetBlocks.add(newBlock);
 							
 							// إعادة تحميل واجهة البلوكات في LogicEditorActivity
-							if (pane != null) {
-								pane.a(); // إعادة رسم البلوكات داخل اللوحة (Pane)
+							if (o != null) {
+								o.b(); // إعادة رسم البلوكات داخل اللوحة (Pane)
 							}
 						}
 						
