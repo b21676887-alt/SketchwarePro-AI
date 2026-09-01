@@ -1602,7 +1602,7 @@ Do you want to continue?"</string>
     <string name="facebook_url">aa</string>
     <string name="firebase_database_url">https://dependable-flag-825.firebaseio.com</string>
     <string name="ga_trackingId">UA-80718117-1</string>
-    <string name="ideas_url">https://t.me/sketcware_ia</string>
+    <string name="ideas_url">https://t.me/abuomarhomid</string>
     <string name="invalid_component">Invalid component</string>
     <string name="invalid_icon_id">Invalid icon ID</string>
     <string name="invalid_required_fields">Some required fields are empty</string>
@@ -1781,7 +1781,7 @@ But, components should be added manually for working correctly."</string>
     <string name="manage_export_url_tab_title_apk">Signed APK</string>
     <string name="manage_export_url_tab_title_data">Exported Data</string>
     <string name="manage_export_url_word_extend">Expand</string>
-    <string name="medium_url">https://t.me/sketcware_ia</string>
+    <string name="medium_url">https://t.me/abuomarhomid</string>
     <string name="message_compatible_chrome_brower">The following page is compatible with Google Chrome. Would you like to install Chrome?</string>
     <string name="message_device_not_support">Your device does not support this hardware. This component may not function properly</string>
     <string name="message_device_not_supported">"This device is not supported. Google Play Services aren't installed."</string>
@@ -2405,8 +2405,8 @@ Please try again later"</string>
     <string name="sign_apk_desc_generate_apk_file">Click sign button below and generate an APK file!</string>
     <string name="sign_apk_title_apk_file_save_path">Save Directory</string>
     <string name="sign_apk_title_export_apk_file">Generate APK File Complete</string>
-    <string name="slack_url_primary">https://t.me/sketcware_ia</string>
-    <string name="slack_url_secondary">https://t.me/sketcware_ia</string>
+    <string name="slack_url_primary">https://t.me/abuomarhomid</string>
+    <string name="slack_url_secondary">https://t.me/abuomarhomid</string>
     <string name="system_information_developer_options">Developer options</string>
     <string name="system_information_dpi">DPI</string>
     <string name="system_information_model_name">Model name</string>
@@ -2533,12 +2533,12 @@ Please try again later"</string>
 
     <!--  links  -->
     <string name="link_github_release">https://github.com/b21676887-alt/SketchwarePro-AI/releases</string>
-    <string name="link_docs_url">https://t.me/b21676887-alt</string>
+    <string name="link_docs_url">https://t.me/abuomarhomid</string>
     <string name="link_youtube_url">https://youtube.com/@sketchware-ia?si=C4xJ-0xfeXxUnnB7</string>
-    <string name="link_telegram_invite">https://t.me/b21676887-alt</string>
+    <string name="link_telegram_invite">https://t.me/abuomarhomid</string>
     <string name="about_joindiscord">Join our Discord</string>
     <string name="title_discord_community">Discord</string>
-    <string name="link_discord_invite">https://t.me/b21676887-alt</string>
+    <string name="link_discord_invite">https://t.me/abuomarhomid</string>
 
     <string name="link_github_commits_url"><![CDATA[https://api.github.com/repos/b21676887-alt/SketchwarePro-AI/commits?per_page=%1$s&page=%2$s]]></string>
     <string name="link_github_main_commit_url">https://api.github.com/repos/b21676887-alt/SketchwarePro-AI/commits/main</string>
