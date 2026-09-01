@@ -62,6 +62,7 @@ import pro.sketchware.lib.validator.PackageNameValidator;
 import pro.sketchware.utility.AdManager;
 import pro.sketchware.utility.FileUtil;
 import pro.sketchware.utility.SketchwareUtil;
+import pro.sketchware.activities.iconcreator.IconCreatorActivity;
 import pro.sketchware.utility.TranslationFunction;
 
 public class MyProjectSettingActivity extends BaseAppCompatActivity implements View.OnClickListener {
@@ -256,12 +257,28 @@ public class MyProjectSettingActivity extends BaseAppCompatActivity implements V
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.app_icon_layout) {
-            showAppIconOptions();
+            // فحص ما إذا كان المشروع من نوع Android Studio باستخدام الدالة المعرفة بالكلاس
+            if (isAndroidStudioProject()) {
+                showAppIconOptions();
+            } else {
+                // للمشاريع العادية (الحديثة/الأصلية)
+                Intent intent = new Intent();
+                intent.setClass(getApplicationContext(), IconCreatorActivity.class);
+                intent.putExtra("sc_id", sc_id);
+                startActivityForResult(intent, REQUEST_CODE_CREATE_ICON);
+            }
         } else if (id == R.id.ok_button) {
             mB.a(v);
             if (isInputValid()) {
-                if (icon != null) saveBitmapTo(icon, getCustomIconPath());
-                new SaveProjectAsyncTask(getApplicationContext()).execute();
+                if (isAndroidStudioProject()) {
+                    // حفظ الصورة أولاً ثم تشغيل المهمة لنوع Studio
+                    if (icon != null) saveBitmapTo(icon, getCustomIconPath());
+                    new SaveProjectAsyncTask(getApplicationContext()).execute();
+                } else {
+                    // الترتيب الخاص بالمشروع العادي
+                    new SaveProjectAsyncTask(getApplicationContext()).execute();
+                    if (icon != null) saveBitmapTo(icon, getCustomIconPath());
+                }
             }
         } else if (id == R.id.cancel) {
             finish();
@@ -280,6 +297,7 @@ public class MyProjectSettingActivity extends BaseAppCompatActivity implements V
             }
         }
     }
+
 
     @Override
     public void onResume() {
