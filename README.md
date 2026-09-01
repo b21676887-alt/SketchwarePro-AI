@@ -1,7 +1,7 @@
 # Sketchware IA
 
 <p align="center">
-  <img src="assets/sketchware-ia-icon.svg" width="160" alt="شعار Sketchware IA">
+  <img src="assets/sketchware-ai-icon.png" width="160" alt="شعار Sketchware IA">
 </p>
 
 <h3 align="center">
