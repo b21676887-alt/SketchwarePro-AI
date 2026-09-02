@@ -2296,6 +2296,7 @@
     <string name="menu_remove">إزالة</string>
     <string name="menu_reset">إعادة ضبط</string>
     <string name="menu_save">حفظ</string>
+    <string name="menu_save_changes">حفظ التغييرات</string>
     <string name="menu_settings">الإعدادات</string>
     <string name="menu_show_source_code">عرض الكود البرمجي</string>
     <string name="menu_store">المتجر</string>

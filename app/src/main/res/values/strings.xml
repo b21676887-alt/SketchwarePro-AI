@@ -3206,6 +3206,7 @@ Do you want to continue?</string>
     <string name="menu_remove">remove</string>
     <string name="menu_reset">Reset</string>
     <string name="menu_save">Save</string>
+    <string name="menu_save_changes">save changes</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_show_source_code">Show Source Code</string>
     <string name="menu_store">Store</string>
