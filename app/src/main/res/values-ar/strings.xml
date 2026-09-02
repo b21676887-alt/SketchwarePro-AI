@@ -2344,10 +2344,10 @@
     <string name="backup_restore_local_libs_single">يبدو أن ملف النسخة الاحتياطية الذي حددته يحتوي على بعض المكتبات المحلية. هل تريد نسخها إلى مجلد local_libs الخاص بك (إذا لم تكن موجودة بالفعل)؟</string>
     <string name="backup_restore_local_libs_multi">يبدو أن ملف النسخة الاحتياطية %1$s (%2$d من أصل %3$d) يحتوي على بعض المكتبات المحلية. هل تريد نسخها إلى مجلد local_libs الخاص بك (إذا لم تكن موجودة بالفعل)؟</string>
     <string name="common_word_please_wait">انتظر من فضلك</string>
-    <string name="access_storage_masseg">ابتداءً من نظام Android 11، يحتاج Sketchware AI إلى إذن جديد لتجنب استغراق وقت طويل في بناء المشاريع. لا تقلق، لا يمكننا فعل أكثر من ذلك فيما يتعلق بالتخزين مع الأذونات الممنوحة حاليًا.</string>
-    <string name="access_storage_access_skip">تخطي</string>
-    <string name="access_storage_Dont_show">لا تظهر مرة أخرى</string>
-    <string name="access_storage_access_title">الوصول إلى التخزين في نظام Android 11</string>
+    <string name="common_word_skip">تخطي</string>
+    <string name="common_word_dont_show_anymore">لاتظهر مرة أخرى</string>
+    <string name="main_storage_access_message">ابتداءً من نظام Android 11، يحتاج Sketchware AI إلى إذن جديد لتجنب استغراق وقت طويل في بناء المشاريع. لا تقلق، لن نتمكن من إجراء أي تغييرات على مساحة التخزين أكثر مما هو مسموح به حاليًا.</string>
+    <string name="main_storage_access_title">الوصول إلى التخزين في نظام Android 11</string>
 </resources>
 
 
