@@ -2348,6 +2348,12 @@
     <string name="common_word_dont_show_anymore">لاتظهر مرة أخرى</string>
     <string name="main_storage_access_message">ابتداءً من نظام Android 11، يحتاج Sketchware AI إلى إذن جديد لتجنب استغراق وقت طويل في بناء المشاريع. لا تقلق، لن نتمكن من إجراء أي تغييرات على مساحة التخزين أكثر مما هو مسموح به حاليًا.</string>
     <string name="main_storage_access_title">الوصول إلى التخزين في نظام Android 11</string>
+    <string name="store_comments_title">تعليقات</string>
+    <string name="store_error">خطأ في المتجر</string>
+    <string name="store_retry">إعادة المحاولة</string>
+        <string name="store_about_project">Sketchub</string>
+    <string name="store_download">Loading قم بتنزيله من المتجر</string>
+    <string name="store_screenshots">لقطات شاشة المتجر</string>
 </resources>
 
 
