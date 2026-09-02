@@ -582,14 +582,14 @@ public class MainActivity extends BasePermissionAppCompatActivity {
             if (!optOutFile.exists() && !granted) {
                 MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this);
                 dialog.setIcon(R.drawable.ic_expire_48dp);
-                dialog.setTitle(R.string.access_storage_access_title);
-                dialog.setMessage(R.string.access_storage_masseg);
+                dialog.setTitle(R.string.main_storage_access_title);
+                dialog.setMessage(Helper.getResString(R.string.main_storage_access_message));
                 dialog.setPositiveButton(Helper.getResString(R.string.common_word_settings), (v, which) -> {
                     FileUtil.requestAllFilesAccessPermission(this);
                     v.dismiss();
                 });
-                dialog.setNegativeButton(R.string.access_storage_access_skip, null);
-                dialog.setNeutralButton(R.string.access_storage_Dont_show, (v, which) -> {
+                dialog.setNegativeButton(R.string.common_word_skip, null);
+                dialog.setNeutralButton(R.string.common_word_dont_show_anymore, (v, which) -> {
                     try {
                         if (!optOutFile.createNewFile())
                             throw new IOException("Failed to create file " + optOutFile);
