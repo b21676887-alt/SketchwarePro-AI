@@ -34,10 +34,11 @@ android {
         //noinspection ExpiredTargetSdkVersion since we don't target getting Sketchware Pro on Google Play.
         targetSdk = 28
         minSdk = 26
-        versionCode = 150
+        versionCode = 158
         versionName = "8.1 preview"
 
         buildConfigField("String", "GIT_HASH", "\"${gitCommitHash}\"")
+        buildConfigField("String", "SKETCHUB_API_KEY", "\"${System.getenv("SKETCHUB_API_KEY")}\"")
     }
 
     signingConfigs {
@@ -47,40 +48,17 @@ android {
             keyAlias = "testkey"
             keyPassword = "testkey"
         }
-        release {
-            // Support env vars for CI (GitHub Actions secrets), fall back to local keystore.
-            // To use in CI, set these GitHub Actions secrets:
-            //   KEYSTORE_BASE64   – base64-encoded sketchware-ia.keystore
-            //   KEY_ALIAS         – sketchware-ia
-            //   KEY_PASSWORD      – keystore key password
-            //   STORE_PASSWORD    – keystore store password
-            def keystoreBase64 = System.getenv("KEYSTORE_BASE64")
-            if (keystoreBase64 != null && !keystoreBase64.isEmpty()) {
-                // Decode keystore from env var at build time
-                def keystoreBytes = java.util.Base64.decoder.decode(keystoreBase64)
-                def tmpKeystore = file("${buildDir}/signing/release.keystore")
-                tmpKeystore.parentFile.mkdirs()
-                tmpKeystore.bytes = keystoreBytes
-                storeFile = tmpKeystore
-            } else {
-                storeFile = file("../sketchware-ia.keystore")
-            }
-            storePassword = System.getenv("STORE_PASSWORD") ?: "sketchware123"
-            keyAlias     = System.getenv("KEY_ALIAS")      ?: "sketchware-ia"
-            keyPassword  = System.getenv("KEY_PASSWORD")   ?: "sketchware123"
-        }
     }
 
     buildTypes {
-        debug {
-            signingConfig = signingConfigs.debug
-        }
         release {
             minifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.release
+            signingConfig = signingConfigs.debug
         }
     }
+    
+    
 
     packaging {
         resources.excludes += "license/*"
