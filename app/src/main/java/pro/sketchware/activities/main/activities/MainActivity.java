@@ -455,7 +455,7 @@ public class MainActivity extends BasePermissionAppCompatActivity {
         }
         activeFragment = fragment;
         currentNavItemId = pageToNavId(page);
-        binding.searchHint.setText(page == PAGE_STORE ? R.string.store_search_hint : R.string.main_search_projects_hint);
+        binding.searchHint.setText(R.string.main_search_projects_hint);
         if (page == PAGE_PROJECTS) {
             binding.createNewProject.show();
         } else {
@@ -469,7 +469,7 @@ public class MainActivity extends BasePermissionAppCompatActivity {
 
     public boolean handleMainSearchQuery(String query) {
         if (activeFragment instanceof ProjectsStoreFragment && projectsStoreFragment != null) {
-            projectsStoreFragment.setSearchQuery(query);
+           // projectsStoreFragment.setSearchQuery(query);
             return true;
         }
         return false;
@@ -582,14 +582,14 @@ public class MainActivity extends BasePermissionAppCompatActivity {
             if (!optOutFile.exists() && !granted) {
                 MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this);
                 dialog.setIcon(R.drawable.ic_expire_48dp);
-                dialog.setTitle("Android 11 storage access");
-                dialog.setMessage("Starting with Android 11, Sketchware Pro needs a new permission to avoid " + "taking ages to build projects. Don't worry, we can't do more to storage than " + "with current granted permissions.");
+                dialog.setTitle(R.string.access_storage_access_title);
+                dialog.setMessage(R.string.access_storage_access_storage_masseg);
                 dialog.setPositiveButton(Helper.getResString(R.string.common_word_settings), (v, which) -> {
                     FileUtil.requestAllFilesAccessPermission(this);
                     v.dismiss();
                 });
-                dialog.setNegativeButton("Skip", null);
-                dialog.setNeutralButton("Don't show anymore", (v, which) -> {
+                dialog.setNegativeButton(R.string.access_storage_access_skip, null);
+                dialog.setNeutralButton(R.string.access_storage_access_Dontshowanymore, (v, which) -> {
                     try {
                         if (!optOutFile.createNewFile())
                             throw new IOException("Failed to create file " + optOutFile);
