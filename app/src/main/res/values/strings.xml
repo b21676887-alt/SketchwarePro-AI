@@ -3258,4 +3258,5 @@ Do you want to continue?</string>
     <string name="common_word_dont_show_anymore">Don\'t show anymore</string>
     <string name="main_storage_access_message">Starting with Android 11, Sketchware Pro needs a new permission to avoid taking ages to build projects. Don\'t worry, we can\'t do more to storage than with current granted permissions.</string>
     <string name="main_storage_access_title">Android 11 storage access</string>
+    <string name="store_comments_title">Comments</string>
 </resources>
