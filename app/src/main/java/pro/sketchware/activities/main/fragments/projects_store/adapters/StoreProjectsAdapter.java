@@ -17,40 +17,35 @@ import java.util.List;
 
 import pro.sketchware.activities.main.fragments.projects_store.ProjectPreviewActivity;
 import pro.sketchware.activities.main.fragments.projects_store.api.ProjectModel;
-import pro.sketchware.databinding.ViewStoreProjectPagerItemBinding;
+import pro.sketchware.databinding.ViewStoreProjectItemBinding;
 
-public class StorePagerProjectsAdapter extends RecyclerView.Adapter<StorePagerProjectsAdapter.ViewHolder> {
+public class StoreProjectsAdapter extends RecyclerView.Adapter<StoreProjectsAdapter.ViewHolder> {
 
     private final List<ProjectModel.Project> projects;
     private final FragmentActivity context;
     private final Gson gson = new Gson();
 
-    public StorePagerProjectsAdapter(List<ProjectModel.Project> projects, FragmentActivity context) {
+    public StoreProjectsAdapter(List<ProjectModel.Project> projects, FragmentActivity context) {
         this.projects = projects;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public StorePagerProjectsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public StoreProjectsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        ViewStoreProjectPagerItemBinding binding = ViewStoreProjectPagerItemBinding.inflate(inflater, parent, false);
+        ViewStoreProjectItemBinding binding = ViewStoreProjectItemBinding.inflate(inflater, parent, false);
         return new ViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(StorePagerProjectsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(StoreProjectsAdapter.ViewHolder holder, int position) {
         ProjectModel.Project project = projects.get(position);
 
-        holder.binding.projectTitle.setText(project.getTitle());
-        holder.binding.projectDesc.setText(project.getDescription());
-        loadImageFromUrl(holder.binding.projectImage, project.getIcon());
-        loadImageFromUrl(holder.binding.screenshot1, project.getScreenshot1());
-        loadImageFromUrl(holder.binding.screenshot2, project.getScreenshot2());
-        loadImageFromUrl(holder.binding.screenshot3, project.getScreenshot3());
-
-        holder.itemView.setScaleX(1f);
-        holder.itemView.setScaleY(1f);
+        holder.binding.title.setText(project.getTitle());
+        holder.binding.likes.setText(project.getLikes());
+        holder.binding.downloads.setText(project.getDownloads());
+        loadImageFromUrl(holder.binding.icon, project.getIcon());
 
         holder.binding.getRoot().setOnClickListener(v -> openProject(project));
     }
@@ -73,9 +68,9 @@ public class StorePagerProjectsAdapter extends RecyclerView.Adapter<StorePagerPr
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private final ViewStoreProjectPagerItemBinding binding;
+        private final ViewStoreProjectItemBinding binding;
 
-        public ViewHolder(ViewStoreProjectPagerItemBinding binding) {
+        public ViewHolder(ViewStoreProjectItemBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
