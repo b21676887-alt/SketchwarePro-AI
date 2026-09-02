@@ -3264,4 +3264,5 @@ Do you want to continue?</string>
     <string name="store_about_project">Sketchub</string>
     <string name="store_download">Loading Download for store</string>
     <string name="store_screenshots">Store screenshots</string>
+    <string name="store_comments">Store Comments</string>
 </resources>
