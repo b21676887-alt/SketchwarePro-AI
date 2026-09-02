@@ -55,7 +55,7 @@
                     app:layout_constraintStart_toEndOf="@+id/icon"
                     app:layout_constraintTop_toTopOf="@+id/icon"
                     app:lineHeight="33dp"
-                    tools:text="Sketchware Pro - a new place to create android apps!" />
+                    tools:text="Sketchware Neo - a new place to create android apps!" />
 
                 <TextView
                     android:id="@+id/author"
@@ -89,7 +89,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textIsSelectable="true"
-                    tools:text="Meet Sketchware Pro v7.0.0!\nFinally, the long-awaited version has been released!" />
+                    tools:text="Meet Sketchware Neo v7.0.0!\nFinally, the long-awaited version has been released!" />
             </com.google.android.material.card.MaterialCardView>
 
             <TextView
@@ -100,7 +100,7 @@
                 android:paddingHorizontal="24dp"
                 android:paddingTop="12dp"
                 android:paddingBottom="16dp"
-                android:text="@string/store_screenshots"
+                android:text="Screenshots"
                 android:textAppearance="?attr/textAppearanceTitleLargeEmphasized" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -138,7 +138,7 @@
                 android:paddingHorizontal="24dp"
                 android:paddingTop="12dp"
                 android:paddingBottom="16dp"
-                android:text="@string/store_about_project"
+                android:text="About this project"
                 android:textAppearance="?attr/textAppearanceTitleLargeEmphasized" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -275,7 +275,7 @@
                 android:singleLine="true"
                 android:textAppearance="?attr/textAppearanceBodyLargeEmphasized"
                 android:textSize="18sp"
-                tools:text="Sketchware Pro - a new place to create android apps!" />
+                tools:text="Sketchware Neo - a new place to create android apps!" />
 
             <TextView
                 android:id="@+id/toolbar_subtitle"
@@ -319,7 +319,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:layout_marginEnd="12dp"
-            android:text="@string/store_comments"
+            android:text="Comments"
             android:visibility="gone"
             app:layout_constraintEnd_toStartOf="@id/btn_download"
             app:layout_constraintStart_toStartOf="parent"
@@ -331,7 +331,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="@string/store_download"
+            android:text="Download"
             app:layout_constraintEnd_toStartOf="@id/btn_like"
             app:layout_constraintStart_toEndOf="@id/btn_comments"
             app:layout_constraintTop_toTopOf="parent" />
