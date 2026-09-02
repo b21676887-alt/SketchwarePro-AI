@@ -1,17 +1,15 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="?attr/materialCardViewFilledStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginBottom="10dp"
-    app:cardBackgroundColor="@color/chat_surface"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="0dp"
-    app:contentPadding="14dp"
-    app:strokeColor="@color/chat_border"
-    app:strokeWidth="1dp">
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginBottom="16dp"
+    app:cardBackgroundColor="?attr/colorSurfaceContainer"
+    app:cardCornerRadius="18dp"
+    app:contentPadding="14dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,10 +37,9 @@
                 android:layout_weight="1"
                 android:ellipsize="marquee"
                 android:maxLines="2"
-                android:text="Random User"
-                android:textColor="@color/chat_text_primary"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                tools:text="Random User"
+                android:textAppearance="?attr/textAppearanceTitleMediumEmphasized"
+                android:textColor="?attr/colorOnSurface" />
 
             <TextView
                 android:id="@+id/user_comment"
@@ -50,8 +47,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:layout_weight="1"
-                android:textColor="@color/chat_text_secondary"
-                android:textSize="13sp"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 tools:text="Hello, this project is so cool!" />
 
         </LinearLayout>

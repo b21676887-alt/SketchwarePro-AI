@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_kelivo_bottom_sheet"
     android:orientation="vertical">
 
     <com.google.android.material.bottomsheet.BottomSheetDragHandleView
@@ -18,14 +17,13 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:gravity="center"
-        android:text="@string/store_preview_comments"
-        android:textColor="@color/chat_text_primary" />
+        android:text="@string/store_comments_title" />
 
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/divider_top"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:dividerColor="@color/chat_border" />
+        app:dividerColor="?attr/colorSurfaceContainerHighest" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -33,7 +31,6 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:clipToPadding="false"
-        android:background="@color/chat_surface"
         android:paddingBottom="24dp"
         android:scrollbarSize="2dp"
         android:scrollbars="vertical"
@@ -44,5 +41,5 @@
         android:id="@+id/divider_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:dividerColor="@color/chat_border" />
+        app:dividerColor="?attr/colorSurfaceContainerHighest" />
 </androidx.appcompat.widget.LinearLayoutCompat>
