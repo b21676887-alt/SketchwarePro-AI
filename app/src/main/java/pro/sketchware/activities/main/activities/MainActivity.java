@@ -583,13 +583,13 @@ public class MainActivity extends BasePermissionAppCompatActivity {
                 MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this);
                 dialog.setIcon(R.drawable.ic_expire_48dp);
                 dialog.setTitle(R.string.access_storage_access_title);
-                dialog.setMessage(R.string.access_storage_access_storage_masseg);
+                dialog.setMessage(R.string.access_storage_masseg);
                 dialog.setPositiveButton(Helper.getResString(R.string.common_word_settings), (v, which) -> {
                     FileUtil.requestAllFilesAccessPermission(this);
                     v.dismiss();
                 });
                 dialog.setNegativeButton(R.string.access_storage_access_skip, null);
-                dialog.setNeutralButton(R.string.access_storage_access_Dontshowanymore, (v, which) -> {
+                dialog.setNeutralButton(R.string.access_storage_Dont_show, (v, which) -> {
                     try {
                         if (!optOutFile.createNewFile())
                             throw new IOException("Failed to create file " + optOutFile);
