@@ -22,6 +22,7 @@ import pro.sketchware.activities.main.fragments.projects_store.api.ProjectModel;
 import pro.sketchware.databinding.FragmentStoreProjectPreviewBinding;
 import pro.sketchware.utility.SketchwareUtil;
 import pro.sketchware.utility.UI;
+import mod.hey.studios.util.Helper;
 
 public class ProjectPreviewActivity extends BaseAppCompatActivity {
     private static final long TITLE_CONTAINER_FADE_DURATION = 150L;
@@ -61,20 +62,24 @@ public class ProjectPreviewActivity extends BaseAppCompatActivity {
         }
 
         if (project.getIsEditorChoice().equals("1")) {
-            addChip("Editor's Choice");
+            addChip(Helper.getResString(R.string.store_editors_choice));
         }
 
         if (project.getIsVerified().equals("1")) {
-            addChip("Verified");
+            addChip(Helper.getResString(R.string.store_verified));
         }
 
         addChip(project.getCategory());
 
-        binding.downloads.setText("Downloads: " + project.getDownloads());
-        binding.filesize.setText("Size: " + project.getProjectSize());
-        binding.timestamp.setText("Released: " + DateFormat.getDateInstance().format(new Date(Long.parseLong(project.getPublishedTimestamp()))));
+        binding.downloads.setText(Helper.getResString(R.string.store_downloads_format, project.getDownloads()));
+        binding.filesize.setText(Helper.getResString(R.string.store_size_format, project.getProjectSize()));
+        try {
+            binding.timestamp.setText(Helper.getResString(R.string.store_released_format, DateFormat.getDateInstance().format(new Date(Long.parseLong(project.getPublishedTimestamp())))));
+        } catch (NumberFormatException e) {
+            binding.timestamp.setText(Helper.getResString(R.string.store_released_format, project.getPublishedTimestamp()));
+        }
         binding.btnComments.setOnClickListener(v -> openCommentsSheet());
-        binding.btnDownload.setOnClickListener(v -> SketchwareUtil.toastError("Downloading projects is unavailable right now!"));
+        binding.btnDownload.setOnClickListener(v -> SketchwareUtil.toastError(Helper.getResString(R.string.error_downloading_unavailable)));
         binding.btnOpenIn.setOnClickListener(v -> openProject());
         binding.btnBack.setOnClickListener(v -> finish());
 

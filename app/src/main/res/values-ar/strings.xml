@@ -2348,13 +2348,25 @@
     <string name="common_word_dont_show_anymore">لاتظهر مرة أخرى</string>
     <string name="main_storage_access_message">ابتداءً من نظام Android 11، يحتاج Sketchware AI إلى إذن جديد لتجنب استغراق وقت طويل في بناء المشاريع. لا تقلق، لن نتمكن من إجراء أي تغييرات على مساحة التخزين أكثر مما هو مسموح به حاليًا.</string>
     <string name="main_storage_access_title">الوصول إلى التخزين في نظام Android 11</string>
+    <string name="store_about_project">حول هذا المشروع</string>
+    <string name="store_comments">تعليقات</string>
     <string name="store_comments_title">تعليقات</string>
-    <string name="store_error">خطأ في المتجر</string>
-    <string name="store_retry">إعادة المحاولة</string>
-        <string name="store_about_project">Sketchub</string>
-    <string name="store_download">Loading قم بتنزيله من المتجر</string>
-    <string name="store_screenshots">لقطات شاشة المتجر</string>
-    <string name="store_comments">Store تعليقات المتجر</string>
+    <string name="store_download">التحميل</string>
+    <string name="store_downloads_format">التنزيلات: %s</string>
+    <string name="store_editors_choice">اختيار المحرر</string>
+    <string name="store_most_downloaded">معظم المشاريع التي تم تنزيلها</string>
+    <string name="store_new_updated">جديد &amp; محدث</string>
+    <string name="store_released_format">عرض للبيع: %s</string>
+    <string name="store_screenshots">لقطات شاشة</string>
+    <string name="store_side_note">لا يزال هذا تنفيذًا أساسيًا لمتجر المشاريع. نحن نعمل بنشاط على تحسينه. ترقبوا!</string>
+    <string name="store_loading">متجر جاري التحميل ...</string>
+    <string name="store_error">غير قادر على تحميل المشاريع. تحقق من اتصالك.</string>
+    <string name="store_retry">اعادة</string>
+    <string name="project_icon">أيقونة المشروع</string>
+    <string name="project_options">خيارات المشروع</string>
+    <string name="store_size_format">حجم: %s</string>
+    <string name="store_verified">تم التحقق</string>
+    <string name="error_downloading_unavailable">تنزيل المشاريع غير متاح الآن!</string>
 </resources>
 
 
