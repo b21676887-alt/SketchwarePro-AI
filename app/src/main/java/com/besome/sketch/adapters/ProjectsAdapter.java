@@ -141,7 +141,7 @@ public class ProjectsAdapter extends RecyclerView.Adapter<ProjectsAdapter.Projec
 
     @Override
     public void onBindViewHolder(@NonNull ProjectViewHolder holder, int position) {
-        holder.itemView.setBackgroundResource(R.drawable.bg_chat_thread_item);
+        holder.itemView.setBackgroundResource(getShapedBackgroundForList(shownProjects, position));
         HashMap<String, Object> projectMap = shownProjects.get(position);
         String scId = yB.c(projectMap, "sc_id");
 
