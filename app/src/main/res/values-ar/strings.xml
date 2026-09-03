@@ -1994,7 +1994,6 @@
     <string name="store_preview_comments">التعليقات</string>
     <string name="store_preview_download">تنزيل</string>
     <string name="store_search_hint">ابحث عن التطبيقات، المشاريع، العلامات...</string>
-    <string name="store_side_note">متجر Sketchware نشط الآن. اضغط هنا لفتح الموقع الرسمي، النشر، أو استكشاف التطبيقات.</string>
     <string name="store_suggestions_title">مقترحات لك</string>
     <string name="store_tab_categories">الفئات</string>
     <string name="store_tab_for_you">لك</string>
@@ -2353,13 +2352,9 @@
     <string name="store_comments_title">تعليقات</string>
     <string name="store_download">التحميل</string>
     <string name="store_downloads_format">التنزيلات: %s</string>
-    <string name="store_editors_choice">اختيار المحرر</string>
-    <string name="store_most_downloaded">معظم المشاريع التي تم تنزيلها</string>
-    <string name="store_new_updated">جديد &amp; محدث</string>
     <string name="store_released_format">عرض للبيع: %s</string>
     <string name="store_screenshots">لقطات شاشة</string>
     <string name="store_side_note">لا يزال هذا تنفيذًا أساسيًا لمتجر المشاريع. نحن نعمل بنشاط على تحسينه. ترقبوا!</string>
-    <string name="store_loading">متجر جاري التحميل ...</string>
     <string name="store_error">غير قادر على تحميل المشاريع. تحقق من اتصالك.</string>
     <string name="store_retry">اعادة</string>
     <string name="project_icon">أيقونة المشروع</string>

@@ -12,7 +12,6 @@
     <string name="main_search_projects_hint">Search projects...</string>
     <string name="main_restore_projects_description">Restore saved backups and imported projects.</string>
     <string name="main_drawer_subtitle">Project tools and app links</string>
-    <string name="store_side_note">Sketchware Store is live. Tap here to open the official website, publish, or explore apps.</string>
     <string name="store_open_website">Open site</string>
     <string name="store_search_hint">Search apps, projects, tags...</string>
     <string name="store_filter_type">Type</string>
@@ -26,12 +25,8 @@
     <string name="store_filters_title">Filters</string>
     <string name="store_filters_apply">Apply</string>
     <string name="store_filters_clear">Clear</string>
-    <string name="store_loading">Loading store...</string>
     <string name="store_empty">No publications found.</string>
     <string name="store_load_more">Load more</string>
-    <string name="store_editors_choice">Editor\'s Choice</string>
-    <string name="store_new_updated">New &amp; Updated</string>
-    <string name="store_most_downloaded">Most downloaded projects</string>
     <string name="store_download_preparing">Preparing download</string>
     <string name="store_download_requesting">Requesting signed URL...</string>
     <string name="store_download_unavailable">Download unavailable</string>
