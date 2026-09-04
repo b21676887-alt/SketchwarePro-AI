@@ -9,6 +9,8 @@ import com.besome.sketch.beans.ViewBean;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Arrays;
+import java.util.List;
 
 import mod.agus.jcoderz.beans.ViewBeans;
 import pro.sketchware.utility.AttributeConstants;
@@ -24,30 +26,82 @@ public class ViewBeanFactory {
 
     public static int getConsideredTypeViewByName(String name, int def) {
         return switch (name) {
-            //Add more here
-            case "MaterialSwitch" -> ViewBean.VIEW_TYPE_WIDGET_SWITCH;
+            case "ConstraintLayout", "androidx.constraintlayout.widget.ConstraintLayout" -> ViewBean.VIEW_TYPE_LAYOUT_CONSTRAINT;
+            case "androidx.coordinatorlayout.widget.CoordinatorLayout" -> ViewBean.VIEW_TYPE_LAYOUT_LINEAR;
+            case "MaterialSwitch", "SwitchMaterial" -> ViewBean.VIEW_TYPE_WIDGET_SWITCH;
             case "MaterialCardView", "CardView" -> ViewBeans.VIEW_TYPE_LAYOUT_CARDVIEW;
             case "TextInputEditText" -> ViewBean.VIEW_TYPE_WIDGET_EDITTEXT;
-            //idk should I use ImageView(ViewBean.VIEW_TYPE_WIDGET_IMAGEVIEW) or Button(ViewBean.VIEW_TYPE_WIDGET_BUTTON)?
-            case "ImageButton" -> ViewBean.VIEW_TYPE_WIDGET_IMAGEVIEW;
+            case "TextInputLayout" -> ViewBean.VIEW_TYPE_LAYOUT_LINEAR;
+            case "MaterialButton", "ExtendedFloatingActionButton" -> ViewBean.VIEW_TYPE_WIDGET_BUTTON;
+            case "MaterialTextView" -> ViewBean.VIEW_TYPE_WIDGET_TEXTVIEW;
+            case "MaterialCheckBox", "Chip" -> ViewBean.VIEW_TYPE_WIDGET_CHECKBOX;
+            case "ImageButton", "ShapeableImageView" -> ViewBean.VIEW_TYPE_WIDGET_IMAGEVIEW;
             case "NestedScrollView" -> ViewBean.VIEW_TYPE_LAYOUT_VSCROLLVIEW;
+            case "MaterialRadioButton" -> ViewBeans.VIEW_TYPE_WIDGET_RADIOBUTTON;
+            case "Slider", "MaterialSlider" -> ViewBean.VIEW_TYPE_WIDGET_SEEKBAR;
+            case "CircularProgressIndicator", "LinearProgressIndicator", "LoadingIndicator" -> ViewBean.VIEW_TYPE_WIDGET_PROGRESSBAR;
+            case "AutoCompleteTextView" -> ViewBeans.VIEW_TYPE_WIDGET_AUTOCOMPLETETEXTVIEW;
             default -> def;
         };
     }
 
+    private boolean isNativelyHandled(String key, ViewBean bean) {
+        List<String> common = Arrays.asList(
+            "android:id", "android:layout_width", "android:layout_height",
+            "android:orientation", "android:layout_weight", "android:weightSum",
+            "android:layout_gravity", "android:gravity",
+            "android:layout_margin", "android:layout_marginLeft", "android:layout_marginTop", "android:layout_marginRight", "android:layout_marginBottom",
+            "android:padding", "android:paddingLeft", "android:paddingTop", "android:paddingRight", "android:paddingBottom",
+            "app:contentPadding", "app:contentPaddingLeft", "app:contentPaddingTop", "app:contentPaddingRight", "app:contentPaddingBottom",
+            "android:background", "app:cardBackgroundColor",
+            "android:enabled", "android:clickable", "android:alpha",
+            "android:scaleX", "android:scaleY", "android:translationX", "android:translationY",
+            "android:rotation", "tools:listitem", "xmlns:android", "xmlns:app", "xmlns:tools"
+        );
+        if (common.contains(key)) return true;
+
+        int type = bean.type;
+        if (bean.getClassInfo().a("TextView") || type == ViewBean.VIEW_TYPE_WIDGET_TEXTVIEW || type == ViewBean.VIEW_TYPE_WIDGET_BUTTON || type == ViewBean.VIEW_TYPE_WIDGET_EDITTEXT || type == ViewBean.VIEW_TYPE_WIDGET_CHECKBOX || type == ViewBean.VIEW_TYPE_WIDGET_SWITCH || type == ViewBeans.VIEW_TYPE_WIDGET_AUTOCOMPLETETEXTVIEW) {
+            if (Arrays.asList("android:text", "android:textSize", "android:textColor", "android:textStyle", "android:hint", "android:textColorHint", "android:singleLine", "android:lines", "android:inputType", "android:imeOptions").contains(key)) return true;
+        }
+        if (bean.getClassInfo().a("ImageView") || type == ViewBean.VIEW_TYPE_WIDGET_IMAGEVIEW) {
+            if (key.equals("android:src") || key.equals("android:scaleType")) return true;
+        }
+        if (type == ViewBean.VIEW_TYPE_WIDGET_CHECKBOX || type == ViewBean.VIEW_TYPE_WIDGET_SWITCH || type == ViewBeans.VIEW_TYPE_WIDGET_RADIOBUTTON) {
+            if (key.equals("android:checked")) return true;
+        }
+        if (type == ViewBean.VIEW_TYPE_WIDGET_SEEKBAR || type == ViewBean.VIEW_TYPE_WIDGET_PROGRESSBAR) {
+            if (key.equals("android:progress") || key.equals("android:max")) return true;
+        }
+        if (type == ViewBean.VIEW_TYPE_WIDGET_PROGRESSBAR) {
+            if (key.equals("style") || key.equals("android:indeterminate")) return true;
+        }
+        if (type == ViewBean.VIEW_TYPE_WIDGET_CALENDARVIEW) {
+            if (key.equals("android:firstDayOfWeek")) return true;
+        }
+        if (type == ViewBean.VIEW_TYPE_WIDGET_SPINNER) {
+            if (key.equals("android:spinnerMode")) return true;
+        }
+        if (type == ViewBean.VIEW_TYPE_WIDGET_LISTVIEW) {
+            if (key.equals("android:dividerHeight") || key.equals("android:choiceMode")) return true;
+        }
+        if (type == ViewBean.VIEW_TYPE_WIDGET_ADVIEW) {
+            if (key.equals("app:adSize") || key.equals("app:adUnitId")) return true;
+        }
+        
+        return false;
+    }
+
     public void applyAttributes(Map<String, String> attributes) {
         Map<String, String> injectAttributes = new LinkedHashMap<>();
-        // Skip processing if the convert type is "include,"
-        // because a.a.a.Ox doesn't generate all the attributes below.
-        // Instead, the `inject` property will handle the attributes.
+        
         if ("include".equals(bean.convert)) {
             StringBuilder injectProperty = new StringBuilder();
             for (Map.Entry<String, String> entry : attributes.entrySet()) {
                 var attrName = entry.getKey();
                 var attrValue = entry.getValue();
-                // Skip this because ViewBeanParser has already handled it as the ID of the include for ViewBean.
-                if (attrName.equals("layout")) {
-                    continue;
+                if (attrName.equals("layout") || attrName.equals("android:id")) {
+                    continue; // Skip layout and ID so they don't get double injected into the inject property.
                 }
                 injectProperty
                         .append(attrName)
@@ -57,6 +111,16 @@ public class ViewBeanFactory {
                         .append("\n");
             }
             bean.inject = injectProperty.toString().trim();
+            
+            if (attributes.containsKey("layout")) {
+                bean.customView = attributes.get("layout").replace("@layout/", "");
+            }
+            
+            // Re-apply correct ID for native parsing
+            if (attributes.containsKey("android:id")) {
+                 bean.id = parseReferName(attributes.get("android:id"), "/");
+            }
+            
             return;
         }
 
@@ -131,29 +195,42 @@ public class ViewBeanFactory {
         if (bean.getClassInfo().a("ImageView")) {
             applyImage(attributes, injectAttributes);
         }
+
         for (Map.Entry<String, String> entry : attributes.entrySet()) {
             var attrName = entry.getKey();
             var attrValue = entry.getValue();
-            var reference = parseReferName(attrName, ":");
-            if (!AttributeConstants.BUILT_IN_ATTRIBUTES.contains(reference)) {
-                // This attribute wasn't included in built-in attributes intentionally
-                if (attrName.equals("style")
-                        && bean.type == ViewBean.VIEW_TYPE_WIDGET_PROGRESSBAR) {
-                    // Skip this since only progressbar have this attribute in ViewBean
+            
+            if (!isNativelyHandled(attrName, bean)) {
+                if (attrName.equals("style") && bean.type == ViewBean.VIEW_TYPE_WIDGET_PROGRESSBAR) {
                     continue;
                 }
-                // Skip and handle relative parent attributes separately
                 if (isRelativeAttr(attrName)) {
                     bean.parentAttributes.put(attrName, parseReferName(attrValue, "/"));
                     continue;
                 }
-                if (attrName.equals("tools:listitem")) {
+                if (attrName.startsWith("app:layout_constraint")) {
+                    String parsedValue = attrValue;
+                    if (parsedValue.startsWith("@+id/")) {
+                        parsedValue = "@id/" + parsedValue.substring(5);
+                    } else if (!parsedValue.startsWith("@id/") && !parsedValue.equals("parent") && !parsedValue.equals("true") && !parsedValue.equals("false")) {
+                        try {
+                            Float.parseFloat(parsedValue); 
+                        } catch (NumberFormatException e) {
+                           if (!parsedValue.contains(":")) {
+                               parsedValue = "@id/" + parsedValue;
+                           }
+                        }
+                    }
+                    bean.parentAttributes.put(attrName, parsedValue);
                     continue;
                 }
-                // add attributes for inject property
-                injectAttributes.put(attrName, attrValue);
+                
+                if (!injectAttributes.containsKey(attrName)) {
+                    injectAttributes.put(attrName, attrValue);
+                }
             }
         }
+        
         if (bean.getClassInfo().b("ListView")
                 || bean.getClassInfo().b("GridView")
                 || bean.getClassInfo().b("Spinner")
@@ -171,13 +248,9 @@ public class ViewBeanFactory {
         }
 
         StringBuilder injectProperty = new StringBuilder();
-        injectAttributes
-                .forEach((key, value) -> injectProperty
-                        .append(key)
-                        .append("=\"")
-                        .append(value)
-                        .append("\"")
-                        .append("\n"));
+        injectAttributes.forEach((key, value) -> 
+            injectProperty.append(key).append("=\"").append(value).append("\"\n")
+        );
         bean.inject = injectProperty.toString().trim();
     }
 
@@ -360,13 +433,8 @@ public class ViewBeanFactory {
             }
             case ViewBean.VIEW_TYPE_WIDGET_ADVIEW -> {
                 var adSize = attributes.getOrDefault("app:adSize", null);
-                bean.adSize = Objects.requireNonNullElse(adSize, "BANNER");
+                bean.adSize = Objects.requireNonNullElse(adSize, "SMART_BANNER");
                 var adUnitId = attributes.getOrDefault("app:adUnitId", null);
-                //noinspection StatementWithEmptyBody
-                if (adUnitId != null) {
-                    // This can probably be ignored since it's auto-generated
-                    // bean.adUnitId = "debug : " + adUnitId;
-                }
             }
         }
     }
@@ -522,7 +590,7 @@ public class ViewBeanFactory {
         var textColor = attributes.getOrDefault("android:textColor", null);
         if (textColor != null) {
             if (PropertiesUtil.isHexColor(textColor)) {
-                bean.textColor = normalizeTextPropertyColor(PropertiesUtil.parseColor(textColor));
+                bean.textColor = PropertiesUtil.parseColor(textColor);
             } else if (textColor.startsWith("@color/") || textColor.startsWith("?")) {
                 bean.resTextColor = textColor;
             } else {
@@ -541,7 +609,7 @@ public class ViewBeanFactory {
                 var hintColor = attributes.getOrDefault("android:textColorHint", null);
                 if (hintColor != null) {
                     if (PropertiesUtil.isHexColor(hintColor)) {
-                        bean.hintColor = normalizeTextPropertyColor(PropertiesUtil.parseColor(hintColor));
+                        bean.hintColor = PropertiesUtil.parseColor(hintColor);
                     } else if (hintColor.startsWith("@color/") || hintColor.startsWith("?")) {
                         bean.resHintColor = hintColor;
                     } else {
@@ -772,12 +840,5 @@ public class ViewBeanFactory {
             }
         }
         return null;
-    }
-
-    private static int normalizeTextPropertyColor(int color) {
-        if (color != 0 && (color & 0xff000000) == 0) {
-            return color | 0xff000000;
-        }
-        return color;
     }
 }

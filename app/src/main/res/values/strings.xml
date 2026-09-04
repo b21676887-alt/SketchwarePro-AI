@@ -3272,4 +3272,15 @@ Do you want to continue?</string>
     <string name="store_size_format">Size: %s</string>
     <string name="store_verified">Verified</string>
     <string name="error_downloading_unavailable">Downloading projects is unavailable right now!</string>
+    <string name="view_code_editor_title">XML Editor</string>
+    <string name="code_editor_menu_font_size">Font size</string>
+    <string name="code_editor_menu_line_numbers">Line numbers</string>
+    <string name="code_editor_menu_sticky_scroll">Sticky scroll</string>
+    <string name="projects_sort_title">Sort options</string>
+    <string name="code_editor_select_font_size">Select font size</string>
+    <string name="code_editor_select_theme">Select Theme</string>
+    <string name="code_editor_menu_find_replace">Find &amp; Replace</string>
+    <string name="code_editor_menu_word_wrap">Word wrap</string>
+    <string name="error_circular_dependency">Circular dependency found in \"%s\"\nPlease resolve the issue before saving</string>
+    <string name="toast_no_changes">No changes to save</string>
 </resources>

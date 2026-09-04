@@ -5,7 +5,6 @@ import static pro.sketchware.utility.PropertiesUtil.parseReferName;
 
 import android.util.Pair;
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 
@@ -35,13 +34,19 @@ import pro.sketchware.utility.InvokeUtil;
 
 public class ViewBeanParser {
 
-    private static final int[] viewsCount = new int[49];
+    private static final int[] viewsCount = new int[100];
     private final XmlPullParser parser;
     private boolean skipRoot;
     private Pair<String, Map<String, String>> rootAttributes;
+    private ArrayList<ViewBean> oldLayout;
 
     public ViewBeanParser(String xml) throws XmlPullParserException {
         this(new StringReader(xml));
+    }
+
+    public ViewBeanParser(String xml, ArrayList<ViewBean> oldLayout) throws XmlPullParserException {
+        this(new StringReader(xml));
+        this.oldLayout = oldLayout;
     }
 
     public ViewBeanParser(File path) throws XmlPullParserException, FileNotFoundException {
@@ -56,15 +61,16 @@ public class ViewBeanParser {
     }
 
     public static String generateUniqueId(Set<String> ids, int type, String className) {
-        String prefix = wq.b(type);
+        String prefix;
+        if (type == ViewBean.VIEW_TYPE_LAYOUT_CONSTRAINT || type >= 49) {
+            prefix = "constraintLayout";
+        } else {
+            prefix = wq.b(type);
+        }
+        
         var name = ViewBean.getViewTypeName(type);
-        // Skip these types as they're the only ones with a different view type name: VScrollView
-        // (ScrollView) and HScrollView (HorizontalScrollView).
-        //noinspection ConstantValue
         if (type != ViewBean.VIEW_TYPE_LAYOUT_VSCROLLVIEW
-                || type != ViewBean.VIEW_TYPE_LAYOUT_HSCROLLVIEW) {
-            // If the prefix is "linear" and the name is different from the className,
-            // update the prefix to the lowercase version of className.
+                && type != ViewBean.VIEW_TYPE_LAYOUT_HSCROLLVIEW) {
             if (prefix.equals("linear")
                     && type == ViewBean.VIEW_TYPE_LAYOUT_LINEAR
                     && !name.equals(className)) {
@@ -110,20 +116,34 @@ public class ViewBeanParser {
 
     public static int getViewTypeByClassName(String name) {
         var className = getNameFromTag(name);
-        // Special case for HorizontalScrollView, as ViewBean refers to it as
-        // HScrollView
         if (className.equals("HorizontalScrollView")) {
             className = "HScrollView";
         }
 
         int type = ViewBean.getViewTypeByTypeName(className);
+
+        if (!name.contains(".")) {
+            if (type == ViewBean.VIEW_TYPE_LAYOUT_LINEAR && !className.equals("LinearLayout")) {
+                if (className.contains("Switch")) type = ViewBean.VIEW_TYPE_WIDGET_SWITCH;
+                else if (className.contains("ProgressIndicator") || className.contains("ProgressBar") || className.contains("LoadingIndicator")) type = ViewBean.VIEW_TYPE_WIDGET_PROGRESSBAR;
+                else if (className.contains("CheckBox") || className.contains("Chip")) type = ViewBean.VIEW_TYPE_WIDGET_CHECKBOX;
+                else if (className.contains("Slider") || className.contains("SeekBar")) type = ViewBean.VIEW_TYPE_WIDGET_SEEKBAR;
+                else if (className.contains("Button")) type = ViewBean.VIEW_TYPE_WIDGET_BUTTON;
+                else if (className.contains("TextView") || className.contains("AutoComplete")) type = ViewBean.VIEW_TYPE_WIDGET_TEXTVIEW;
+                else if (className.contains("ImageView")) type = ViewBean.VIEW_TYPE_WIDGET_IMAGEVIEW;
+                else if (className.contains("CardView")) type = 36;
+                else if (className.contains("RecyclerView")) type = 48;
+                else if (className.contains("FloatingActionButton") || className.contains("FAB")) type = ViewBean.VIEW_TYPE_WIDGET_FAB;
+                else if (className.contains("ConstraintLayout")) type = ViewBean.VIEW_TYPE_LAYOUT_CONSTRAINT;
+            }
+        }
+
         return getViewTypeByTag(name, type);
     }
 
     public static int getViewTypeByTag(String tag, int defaultType) {
-        // Special case for other views that can be considered built-in views by type
         var type = ViewBeanFactory.getConsideredTypeViewByName(getNameFromTag(tag), defaultType);
-        if (type == ViewBean.VIEW_TYPE_LAYOUT_LINEAR) {
+        if (type == ViewBean.VIEW_TYPE_LAYOUT_LINEAR && !tag.contains(".")) {
             var view = InvokeUtil.createView(getContext(), tag);
             if (view != null) {
                 Class<?> clazz = view.getClass();
@@ -165,10 +185,6 @@ public class ViewBeanParser {
                 case XmlPullParser.START_TAG -> {
                     var name = parser.getName();
                     if (!isRootSkipped) {
-                        var view = InvokeUtil.createView(getContext(), name);
-                        if (!(view instanceof ViewGroup)) {
-                            throw new IOException("Root view must be a ViewGroup");
-                        }
                         Map<String, String> attributes = new LinkedHashMap<>();
                         for (int i = 0; i < parser.getAttributeCount(); i++) {
                             if (!parser.getAttributeName(i).startsWith("xmlns")) {
@@ -178,39 +194,86 @@ public class ViewBeanParser {
                         }
                         rootAttributes = Pair.create(name, attributes);
                         isRootSkipped = true;
-                        break;
+                        break; 
                     }
+                    
                     var className = getNameFromTag(name);
                     int type = getViewTypeByClassName(name);
 
-                    // Get view ID, either from attributes or generate a unique ID
                     String attrId = parser.getAttributeValue(null, "android:id");
-                    String id =
-                            attrId != null && !ids.contains(parseReferName(attrId, "/"))
+                    String id = "";
+                    
+                    if (className.equals("include")) {
+                        if (attrId != null && !attrId.isEmpty()) {
+                            id = parseReferName(attrId, "/");
+                        } else {
+                            String layout = parser.getAttributeValue(null, "layout");
+                            if (layout != null) {
+                                id = parseReferName(layout, "/");
+                                // We append a random hash to ensure duplicated layout names without explicit IDs don't collide
+                                if (ids.contains(id)) {
+                                    id = generateUniqueId(ids, type, className);
+                                }
+                            } else {
+                                id = generateUniqueId(ids, type, className);
+                            }
+                        }
+                    } else {
+                        id = attrId != null && !ids.contains(parseReferName(attrId, "/"))
                                     ? parseReferName(attrId, "/")
                                     : generateUniqueId(ids, type, className);
+                    }
 
-                    // Special case for 'include' tag with layout reference, treated as ID in
-                    // ViewBean
-                    if (className.equals("include")) {
-                        String layout = parser.getAttributeValue(null, "layout");
-                        if (layout != null) {
-                            id = parseReferName(layout, "/");
+                    boolean isCustom = false;
+                    String customView = "";
+                    String convert = name;
+                    boolean oldBeanFound = false;
+
+                    if (oldLayout != null) {
+                        for (ViewBean oldBean : oldLayout) {
+                            if (oldBean.id.equals(id)) {
+                                if (type == 0 || type == 14) {
+                                    type = oldBean.type;
+                                }
+                                if (oldBean.convert.equals(convert) || className.equals("include")) {
+                                    isCustom = oldBean.isCustomWidget;
+                                    customView = oldBean.customView;
+                                    oldBeanFound = true;
+                                }
+                                break;
+                            }
                         }
+                    } 
+                    
+                    if (!oldBeanFound && name.contains(".")) {
+                        if (type == ViewBean.VIEW_TYPE_LAYOUT_CONSTRAINT || className.equals("ConstraintLayout")) {
+                            isCustom = false;
+                            convert = "androidx.constraintlayout.widget.ConstraintLayout"; 
+                        } else if (name.equals("androidx.coordinatorlayout.widget.CoordinatorLayout")) {
+                            isCustom = true; 
+                            convert = name;
+                            type = ViewBean.VIEW_TYPE_LAYOUT_LINEAR;
+                        } else {
+                            isCustom = true;
+                            convert = name;
+                        }
+                    } else if (type == ViewBean.VIEW_TYPE_LAYOUT_CONSTRAINT) {
+                         isCustom = false;
+                         convert = "androidx.constraintlayout.widget.ConstraintLayout";
                     }
 
                     ViewBean bean = new ViewBean(id, type);
-
-                    bean.convert = name;
+                    bean.isCustomWidget = isCustom;
+                    bean.customView = customView;
+                    bean.convert = convert;
 
                     ViewBean parent = viewStack.isEmpty() ? null : viewStack.peek();
-                    // Set parent ID (or root if no parent)
                     int parentType = rootAttributes != null ? getViewTypeByClassName(rootAttributes.first) : ViewBean.VIEW_TYPE_LAYOUT_LINEAR;
+                    
                     bean.parent = parent != null ? parent.id : "root";
-                    bean.parentType =
-                            bean.parent.equals("root")
-                                    ? parentType
-                                    : parent.type;
+                    
+                    bean.parentType = bean.parent.equals("root") ? parentType : parent.type;
+                    
                     bean.index = index;
                     Map<String, String> attributes = new LinkedHashMap<>();
                     for (int i = 0; i < parser.getAttributeCount(); i++) {
@@ -218,6 +281,7 @@ public class ViewBeanParser {
                             attributes.put(parser.getAttributeName(i), parser.getAttributeValue(i));
                         }
                     }
+                    
                     beansAttributes.put(id, attributes);
                     beans.add(bean);
                     ids.add(id);
@@ -235,6 +299,7 @@ public class ViewBeanParser {
             }
             parser.next();
         }
+        
         for (ViewBean bean : beans) {
             var attr = beansAttributes.getOrDefault(bean.id, null);
             if (attr != null) {

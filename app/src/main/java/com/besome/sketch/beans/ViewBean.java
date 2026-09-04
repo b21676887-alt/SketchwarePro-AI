@@ -31,7 +31,6 @@ public class ViewBean extends nA implements Parcelable {
     public static final int CHOICE_MODE_SINGLE = 1;
     public static final int CHOICE_MODE_MULTI = 2;
 
-
     public static final int DEFAULT_PROGRESS = 0;
     public static final int DEFAULT_MAX = 100;
 
@@ -61,6 +60,8 @@ public class ViewBean extends nA implements Parcelable {
     public static final int VIEW_TYPE_WIDGET_ADVIEW = 17;
     public static final int VIEW_TYPE_WIDGET_MAPVIEW = 18;
     public static final int VIEW_TYPE_COUNT = 19;
+    
+    public static final int VIEW_TYPE_LAYOUT_CONSTRAINT = 50; 
 
     @Expose
     public String adSize;
@@ -217,6 +218,10 @@ public class ViewBean extends nA implements Parcelable {
         name = id;
         this.type = type;
         parent = null;
+        if (type == VIEW_TYPE_LAYOUT_CONSTRAINT) {
+            isCustomWidget = false;
+            convert = "androidx.constraintlayout.widget.ConstraintLayout";
+        }
     }
 
     public static Parcelable.Creator<ViewBean> getCreator() {
@@ -226,6 +231,7 @@ public class ViewBean extends nA implements Parcelable {
     public static int getViewTypeByTypeName(String typeName) {
         return switch (typeName) {
             case "RelativeLayout" -> VIEW_TYPE_LAYOUT_RELATIVE;
+            case "ConstraintLayout", "androidx.constraintlayout.widget.ConstraintLayout" -> VIEW_TYPE_LAYOUT_CONSTRAINT;
             case "Switch" -> VIEW_TYPE_WIDGET_SWITCH;
             case "MapView" -> VIEW_TYPE_WIDGET_MAPVIEW;
             case "ProgressBar" -> VIEW_TYPE_WIDGET_PROGRESSBAR;
@@ -251,6 +257,7 @@ public class ViewBean extends nA implements Parcelable {
         return switch (type) {
             case VIEW_TYPE_LAYOUT_LINEAR -> "LinearLayout";
             case VIEW_TYPE_LAYOUT_RELATIVE -> "RelativeLayout";
+            case VIEW_TYPE_LAYOUT_CONSTRAINT -> "ConstraintLayout";
             case VIEW_TYPE_LAYOUT_HSCROLLVIEW -> "HScrollView";
             case VIEW_TYPE_WIDGET_BUTTON -> "Button";
             case VIEW_TYPE_WIDGET_TEXTVIEW -> "TextView";
@@ -275,6 +282,7 @@ public class ViewBean extends nA implements Parcelable {
         return switch (type) {
             case VIEW_TYPE_LAYOUT_LINEAR -> R.drawable.ic_mtrl_view_horizontal;
             case VIEW_TYPE_LAYOUT_RELATIVE -> R.drawable.ic_mtrl_view_relative;
+            case VIEW_TYPE_LAYOUT_CONSTRAINT -> R.drawable.ic_mtrl_view_constraint;
             case VIEW_TYPE_LAYOUT_HSCROLLVIEW -> R.drawable.ic_mtrl_swipe_horizontal;
             case VIEW_TYPE_WIDGET_BUTTON -> R.drawable.ic_mtrl_button_click;
             case VIEW_TYPE_WIDGET_TEXTVIEW -> R.drawable.ic_mtrl_formattext;
@@ -300,6 +308,7 @@ public class ViewBean extends nA implements Parcelable {
         String name = switch (type) {
             case VIEW_TYPE_LAYOUT_LINEAR -> "LinearLayout";
             case VIEW_TYPE_LAYOUT_RELATIVE -> "RelativeLayout";
+            case VIEW_TYPE_LAYOUT_CONSTRAINT -> "ConstraintLayout"; 
             case VIEW_TYPE_LAYOUT_HSCROLLVIEW -> "HorizontalScrollView";
             case VIEW_TYPE_WIDGET_BUTTON -> "Button";
             case VIEW_TYPE_WIDGET_TEXTVIEW -> "TextView";
@@ -370,8 +379,13 @@ public class ViewBean extends nA implements Parcelable {
         inject = other.inject;
         convert = other.convert;
         progressStyle = other.progressStyle;
-        parentAttributes = other.parentAttributes;
+        parentAttributes = new HashMap<>(other.parentAttributes);
         isCustomWidget = other.isCustomWidget;
+        
+        if (type == VIEW_TYPE_LAYOUT_CONSTRAINT) {
+            isCustomWidget = false;
+            convert = "androidx.constraintlayout.widget.ConstraintLayout";
+        }
     }
 
     @Override
@@ -407,7 +421,8 @@ public class ViewBean extends nA implements Parcelable {
                 !adUnitId.equals(viewBean.adUnitId) || !text.isEqual(viewBean.text) || !layout.isEqual(viewBean.layout) ||
                 !image.isEqual(viewBean.image) || !indeterminate.equals(viewBean.indeterminate) ||
                 !inject.equals(viewBean.inject) || !convert.equals(viewBean.convert) ||
-                !progressStyle.equals(viewBean.progressStyle) || !parentAttributes.equals(viewBean.parentAttributes)) {
+                !progressStyle.equals(viewBean.progressStyle) || !parentAttributes.equals(viewBean.parentAttributes) ||
+                isCustomWidget != viewBean.isCustomWidget) {
             return false;
         }
 

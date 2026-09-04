@@ -2362,6 +2362,17 @@
     <string name="store_size_format">حجم: %s</string>
     <string name="store_verified">تم التحقق</string>
     <string name="error_downloading_unavailable">تنزيل المشاريع غير متاح الآن!</string>
+    <string name="view_code_editor_title">محرر XML</string>
+    <string name="code_editor_menu_font_size">حجم الخط</string>
+    <string name="code_editor_menu_line_numbers">أرقام الأسطر</string>
+    <string name="code_editor_menu_sticky_scroll">التمرير اللاصق</string>
+    <string name="projects_sort_title">خيارات الفرز</string>
+    <string name="code_editor_select_font_size">حدد حجم الخط</string>
+    <string name="code_editor_select_theme">اختر المظهر</string>
+    <string name="code_editor_menu_find_replace">البحث والاستبدال</string>
+    <string name="code_editor_menu_word_wrap">التفاف النص</string>
+    <string name="error_circular_dependency">Circular dependency found in \"%s\"\nPlease resolve the issue before saving</string>
+    <string name="toast_no_changes">لا توجد تغييرات لحفظها</string>
 </resources>
 
 

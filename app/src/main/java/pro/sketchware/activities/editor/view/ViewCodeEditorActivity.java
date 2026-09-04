@@ -30,6 +30,7 @@ import pro.sketchware.databinding.ViewCodeEditorBinding;
 import pro.sketchware.managers.inject.InjectRootLayoutManager;
 import pro.sketchware.tools.ViewBeanParser;
 import pro.sketchware.utility.EditorUtils;
+import pro.sketchware.lib.code_editor.CodeEditorPreferences;
 import pro.sketchware.utility.SketchwareUtil;
 import pro.sketchware.utility.relativelayout.CircularDependencyDetector;
 import pro.sketchware.utility.TranslationFunction;
@@ -50,6 +51,8 @@ public class ViewCodeEditorActivity extends BaseAppCompatActivity {
     private ProjectLibraryBean projectLibrary;
 
     private InjectRootLayoutManager rootLayoutManager;
+    
+    private CodeEditorPreferences editorPrefs;
 
     private final OnBackPressedCallback onBackPressedCallback =
             new OnBackPressedCallback(true) {
@@ -102,7 +105,7 @@ public class ViewCodeEditorActivity extends BaseAppCompatActivity {
         projectLibrary = jC.c(sc_id).c();
         getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
         setSupportActionBar(binding.toolbar);
-        getSupportActionBar().setTitle("XML Editor");
+        getSupportActionBar().setTitle(R.string.view_code_editor_title);
         getSupportActionBar().setSubtitle(title);
         binding.toolbar.setNavigationOnClickListener(v -> {
             if (onBackPressedCallback.isEnabled()) {
@@ -112,9 +115,10 @@ public class ViewCodeEditorActivity extends BaseAppCompatActivity {
         content = getIntent().getStringExtra("content");
         editor = binding.editor;
         editor.setTypefaceText(EditorUtils.getTypeface(this));
-        editor.setTextSize(14);
         editor.setText(content);
         EditorUtils.loadXmlConfig(editor);
+        editorPrefs = new CodeEditorPreferences(this, "vce");
+        editorPrefs.applyToEditor(editor, false);
         if (projectFile.fileType == ProjectFileBean.PROJECT_FILE_TYPE_ACTIVITY
                 && projectLibrary.isEnabled()) {
             setNote("Use AppCompat Manager to modify attributes for CoordinatorLayout, Toolbar, and other appcompat layout/widget.");
@@ -134,21 +138,29 @@ public class ViewCodeEditorActivity extends BaseAppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE, 0, Menu.NONE, "Undo")
+        menu.add(Menu.NONE, 0, Menu.NONE, Helper.getResString(R.string.menu_undo))
                 .setIcon(AppCompatResources.getDrawable(this, R.drawable.ic_mtrl_undo))
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.add(Menu.NONE, 1, Menu.NONE, "Redo")
+        menu.add(Menu.NONE, 1, Menu.NONE, Helper.getResString(R.string.menu_redo))
                 .setIcon(AppCompatResources.getDrawable(this, R.drawable.ic_mtrl_redo))
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.add(Menu.NONE, 2, Menu.NONE, "Save")
+        menu.add(Menu.NONE, 2, Menu.NONE, Helper.getResString(R.string.menu_save))
                 .setIcon(AppCompatResources.getDrawable(this, R.drawable.ic_mtrl_save))
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         if (projectFile.fileType == ProjectFileBean.PROJECT_FILE_TYPE_ACTIVITY
                 && projectLibrary.isEnabled()) {
-            menu.add(Menu.NONE, 3, Menu.NONE, "Edit AppCompat");
+            menu.add(Menu.NONE, 3, Menu.NONE, Helper.getResString(R.string.menu_edit_appcompat));
         }
-        menu.add(Menu.NONE, 4, Menu.NONE, "Reload color schemes");
-        menu.add(Menu.NONE, 5, Menu.NONE, "Layout Preview");
+        menu.add(Menu.NONE, 4, Menu.NONE, Helper.getResString(R.string.menu_reload_colors));
+        menu.add(Menu.NONE, 5, Menu.NONE, Helper.getResString(R.string.menu_layout_preview));
+        menu.add(Menu.NONE, 6, Menu.NONE, Helper.getResString(R.string.code_editor_menu_find_replace));
+        menu.add(Menu.NONE, 7, Menu.NONE, Helper.getResString(R.string.code_editor_menu_word_wrap))
+                .setCheckable(true).setChecked(editorPrefs.getWordWrap());
+        menu.add(Menu.NONE, 8, Menu.NONE, Helper.getResString(R.string.code_editor_menu_font_size));
+        menu.add(Menu.NONE, 9, Menu.NONE, Helper.getResString(R.string.code_editor_menu_line_numbers))
+                .setCheckable(true).setChecked(editorPrefs.getLineNumbers());
+        menu.add(Menu.NONE, 10, Menu.NONE, Helper.getResString(R.string.code_editor_menu_sticky_scroll))
+                .setCheckable(true).setChecked(editorPrefs.getStickyScroll());
         return true;
     }
 
@@ -173,10 +185,39 @@ public class ViewCodeEditorActivity extends BaseAppCompatActivity {
             }
             case 4 -> {
                 EditorUtils.loadXmlConfig(binding.editor);
+                editorPrefs.applyToEditor(editor, false);
                 return true;
             }
             case 5 -> {
                 toLayoutPreview();
+                return true;
+            }
+            case 6 -> {
+                editor.getSearcher().stopSearch();
+                editor.beginSearchMode();
+                return true;
+            }
+            case 7 -> {
+                item.setChecked(!item.isChecked());
+                editor.setWordwrap(item.isChecked());
+                editorPrefs.setWordWrap(item.isChecked());
+                return true;
+            }
+            case 8 -> {
+                editorPrefs.showFontSizeDialog(this, editor, null);
+                return true;
+            }
+            case 9 -> {
+                item.setChecked(!item.isChecked());
+                editor.setLineNumberEnabled(item.isChecked());
+                editorPrefs.setLineNumbers(item.isChecked());
+                return true;
+            }
+            case 10 -> {
+                item.setChecked(!item.isChecked());
+                editor.getProps().stickyScroll = item.isChecked();
+                editor.invalidate();
+                editorPrefs.setStickyScroll(item.isChecked());
                 return true;
             }
             default -> {
@@ -224,8 +265,7 @@ public class ViewCodeEditorActivity extends BaseAppCompatActivity {
                     for (String attr : viewBean.parentAttributes.keySet()) {
                         String targetId = viewBean.parentAttributes.get(attr);
                         if (!detector.isLegalAttribute(targetId, attr)) {
-                            SketchwareUtil.toastError("Circular dependency found in \"" + viewBean.name + "\"\n" +
-                                    "Please resolve the issue before saving");
+                            SketchwareUtil.toastError(String.format(Helper.getResString(R.string.error_circular_dependency), viewBean.name));
                             return;
                         }
                     }
@@ -236,9 +276,9 @@ public class ViewCodeEditorActivity extends BaseAppCompatActivity {
                 if (!isEdited) {
                     isEdited = true;
                 }
-                SketchwareUtil.toast("Saved");
+                SketchwareUtil.toast(Helper.getResString(R.string.common_word_saved));
             } else {
-                SketchwareUtil.toast("No changes to save");
+                SketchwareUtil.toast(Helper.getResString(R.string.toast_no_changes));
             }
         } catch (Exception e) {
             SketchwareUtil.toastError(e.toString());
@@ -248,6 +288,12 @@ public class ViewCodeEditorActivity extends BaseAppCompatActivity {
 
     private boolean isContentModified() {
         return !content.equals(editor.getText().toString());
+    }
+    
+    @Override
+    public void onStop() {
+        super.onStop();
+        editorPrefs.saveTextSizeFromEditor(editor, getResources().getDisplayMetrics().scaledDensity);
     }
 
     private void exitWithEditedContent() {
