@@ -1636,6 +1636,7 @@
     <string name="property_translation_x">إزاحة X</string>
     <string name="property_translation_y">إزاحة Y</string>
     <string name="property_visibility">الظهور (Visibility)</string>
+    <string name="property_elevation">ارتفاع (Elevation)</string>
     <string name="property_weight">الوزن (Weight)</string>
     <string name="property_weight_sum">مجموع الأوزان (Weight sum)</string>
     <string name="publish_account_setting_connecting_account_step_name">هل لديك حساب مطور على Google Play؟</string>

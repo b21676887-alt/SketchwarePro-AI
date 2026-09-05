@@ -14,7 +14,7 @@
         android:layout_marginBottom="12dp"
         android:contentDescription="@string/donation_dialog_title"
         android:scaleType="fitCenter"
-        app:srcCompat="@drawable/ic_mtrl_star" />
+        app:srcCompat="@drawable/ic_notice_star" />
 
     <TextView
         android:id="@+id/title"

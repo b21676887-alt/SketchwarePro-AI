@@ -2003,6 +2003,7 @@ ACTION_VIEW
     <string name="property_weight">Weight</string>
     <string name="property_weight_sum">Weight sum</string>
     <string name="property_visibility">Visibility</string>
+    <string name="property_elevation">Elevation</string>
     <string name="property_animate_layout_changes">Animate layout changes</string>
     <string name="publish_account_setting_connecting_account_step_name">Do you have a Google Play Developer Account?</string>
     <string name="publish_account_setting_select_json_step_name">Check Service Account Credentials</string>

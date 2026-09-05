@@ -8,8 +8,11 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import com.besome.sketch.beans.BlockBean;
 import com.besome.sketch.beans.EventBean;
@@ -17,13 +20,21 @@ import com.besome.sketch.beans.LayoutBean;
 import com.besome.sketch.beans.ProjectFileBean;
 import com.besome.sketch.beans.ViewBean;
 import com.besome.sketch.editor.manage.image.ManageImageActivity;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Locale;
+import java.util.stream.Collectors;
 
 import a.a.a.Cx;
 import a.a.a.Gx;
@@ -33,14 +44,11 @@ import a.a.a.cC;
 import a.a.a.jC;
 import a.a.a.mB;
 import a.a.a.oq;
-import a.a.a.wq;
 import mod.hey.studios.project.ProjectSettings;
+import mod.hey.studios.util.Helper;
 import mod.pranav.viewbinding.ViewBindingBuilder;
 import pro.sketchware.R;
-import pro.sketchware.activities.resourceseditor.components.utils.StringsEditorManager;
-import pro.sketchware.utility.FileUtil;
-import pro.sketchware.utility.XmlUtil;
-import pro.sketchware.utility.TranslationFunction;
+import pro.sketchware.utility.ThemeUtils;
 
 public class ViewPropertyItems extends LinearLayout implements Kw, View.OnClickListener {
     private final boolean b = false;
@@ -105,7 +113,9 @@ public class ViewPropertyItems extends LinearLayout implements Kw, View.OnClickL
             case "property_layout_gravity" -> b(property, bean.layout.layoutGravity);
             case "property_weight" -> b(property, String.valueOf(bean.layout.weight));
             case "property_text" -> b(property, bean.text.text);
+            
             case "property_text_size" -> b(property, String.valueOf(bean.text.textSize));
+            
             case "property_text_style" -> c(property, bean.text.textType);
             case "property_text_color" -> r(property, bean.text.resTextColor, bean.text.textColor);
             case "property_hint" -> b(property, bean.text.hint);
@@ -121,6 +131,11 @@ public class ViewPropertyItems extends LinearLayout implements Kw, View.OnClickL
             case "property_background_color" ->
                     r(property, bean.layout.backgroundResColor, bean.layout.backgroundColor);
             case "property_enabled" -> e(property, bean.enabled);
+            case "property_elevation" -> {
+                String el = getInjectedAttr(bean, "android:elevation").replaceAll("[^0-9.]", "");
+                b(property, el);
+            }
+            case "property_visibility" -> b(property, getInjectedAttr(bean, "android:visibility"));
             case "property_rotate" -> b(property, String.valueOf(bean.image.rotate));
             case "property_alpha" -> b(property, String.valueOf(bean.alpha));
             case "property_translation_x" -> b(property, String.valueOf(bean.translationX));
@@ -236,7 +251,6 @@ public class ViewPropertyItems extends LinearLayout implements Kw, View.OnClickL
         c = bean;
         Cx.a().b(c.getClassInfo().getClassName());
         removeAllViews();
-        f.clear();
         if (bean.id.equals("_fab")) {
             b(bean);
         } else {
@@ -368,12 +382,56 @@ public class ViewPropertyItems extends LinearLayout implements Kw, View.OnClickL
         }
 
         a(bean, "property_image");
+        a(bean, "property_elevation");
+        a(bean, "property_visibility");
         a(bean, "property_rotate");
         a(bean, "property_alpha");
         a(bean, "property_translation_x");
         a(bean, "property_translation_y");
         a(bean, "property_scale_x");
         a(bean, "property_scale_y");
+    }
+
+    private String getInjectedAttr(ViewBean bean, String attrName) {
+        LinkedHashMap<String, String> attributes = parseInjectString(bean.inject);
+        String value = attributes.get(attrName);
+        return value == null ? "" : value;
+    }
+
+    private String setInjectedAttr(ViewBean bean, String attrName, String newValue) {
+        LinkedHashMap<String, String> attributes = parseInjectString(bean.inject);
+        if (newValue == null || newValue.isEmpty()) {
+            attributes.remove(attrName);
+        } else {
+            attributes.put(attrName, newValue);
+        }
+        return attributes.entrySet().stream()
+                .map(entry -> entry.getKey() + "=\"" + entry.getValue() + "\"")
+                .collect(Collectors.joining("\n"));
+    }
+
+    private LinkedHashMap<String, String> parseInjectString(String inject) {
+        LinkedHashMap<String, String> attributes = new LinkedHashMap<>();
+        if (inject == null || inject.trim().isEmpty()) return attributes;
+
+        try {
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            XmlPullParser parser = factory.newPullParser();
+            parser.setInput(new StringReader("<tag " + inject + "></tag>"));
+
+            int eventType = parser.getEventType();
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                if (eventType == XmlPullParser.START_TAG) {
+                    for (int i = 0; i < parser.getAttributeCount(); i++) {
+                        attributes.put(parser.getAttributeName(i), parser.getAttributeValue(i));
+                    }
+                }
+                eventType = parser.next();
+            }
+        } catch (XmlPullParserException | IOException | RuntimeException ignored) {
+        }
+
+        return attributes;
     }
 
     private void c(String key, int value) {
@@ -419,9 +477,11 @@ public class ViewPropertyItems extends LinearLayout implements Kw, View.OnClickL
         Gx parentClassInfo = bean.getParentClassInfo();
         a(bean, "property_layout_width");
         a(bean, "property_layout_height");
-        if (bean.parentType == ViewBean.VIEW_TYPE_LAYOUT_RELATIVE) {
+        
+        if (bean.parentType == ViewBean.VIEW_TYPE_LAYOUT_RELATIVE || bean.parentType == ViewBean.VIEW_TYPE_LAYOUT_CONSTRAINT) {
             a(bean, "property_parent_attr");
         }
+        
         a(bean, "property_padding");
         a(bean, "property_margin");
         if (classInfo.a("LinearLayout")) {
@@ -483,7 +543,6 @@ public class ViewPropertyItems extends LinearLayout implements Kw, View.OnClickL
     public void e(ViewBean bean) {
         c = bean;
         removeAllViews();
-        f.clear();
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         params.gravity = Gravity.LEFT;
@@ -685,6 +744,9 @@ public class ViewPropertyItems extends LinearLayout implements Kw, View.OnClickL
             a(bean, "property_enabled");
         }
 
+        a(bean, "property_elevation");
+        a(bean, "property_visibility");
+
         a(bean, "property_rotate");
         a(bean, "property_alpha");
         a(bean, "property_translation_x");
@@ -709,13 +771,22 @@ public class ViewPropertyItems extends LinearLayout implements Kw, View.OnClickL
                     }
                     case "property_convert" -> bean.convert = inputItem.getValue();
                     case "property_inject" -> bean.inject = inputItem.getValue();
-                    case "property_text" -> bean.text.text = autoCreateOrReferenceString(inputItem.getValue());
-                    case "property_hint" -> bean.text.hint = autoCreateOrReferenceString(inputItem.getValue());
+                    case "property_text" -> bean.text.text = inputItem.getValue();
+                    case "property_hint" -> bean.text.hint = inputItem.getValue();
                     case "property_text_size" -> bean.text.textSize = Integer.parseInt(inputItem.getValue());
                     case "property_weight" ->
                             bean.layout.weight = Integer.parseInt(inputItem.getValue());
                     case "property_weight_sum" ->
                             bean.layout.weightSum = Integer.parseInt(inputItem.getValue());
+                    case "property_elevation" -> {
+                        String val = inputItem.getValue();
+                        if (!val.isEmpty() && !val.contains("dp")) {
+                            val += "dp";
+                        }
+                        bean.inject = setInjectedAttr(bean, "android:elevation", val);
+                    }
+                    case "property_visibility" ->
+                            bean.inject = setInjectedAttr(bean, "android:visibility", inputItem.getValue());
                     case "property_rotate" ->
                             bean.image.rotate = Integer.parseInt(inputItem.getValue());
                     case "property_alpha" -> bean.alpha = Float.parseFloat(inputItem.getValue());
@@ -984,7 +1055,6 @@ public class ViewPropertyItems extends LinearLayout implements Kw, View.OnClickL
         }
     }
 
-
     public void setProjectSettings(ProjectSettings settings) {
         this.settings = settings;
     }
@@ -1005,49 +1075,5 @@ public class ViewPropertyItems extends LinearLayout implements Kw, View.OnClickL
             intent.putExtra("sc_id", sc_id);
             ((Activity) getContext()).startActivityForResult(intent, 209);
         }
-    }
-
-    private String autoCreateOrReferenceString(String input) {
-        if (input == null) return null;
-        String value = input.trim();
-        if (value.isEmpty()) return input;
-        if (value.startsWith("@string/")) return value;
-
-        String stringsPath = wq.b(sc_id) + "/files/resource/values/strings.xml";
-        StringsEditorManager sem = new StringsEditorManager();
-        sem.sc_id = sc_id;
-        ArrayList<HashMap<String, Object>> listMap = new ArrayList<>();
-        String xml = FileUtil.readFileIfExist(stringsPath);
-        sem.convertXmlStringsToListMap(xml, listMap);
-
-        for (HashMap<String, Object> map : listMap) {
-            Object textObj = map.get("text");
-            if (textObj != null && value.equals(String.valueOf(textObj))) {
-                Object keyObj = map.get("key");
-                if (keyObj != null) {
-                    return "@string/" + String.valueOf(keyObj);
-                }
-            }
-        }
-
-        String base = value.toLowerCase(Locale.ROOT)
-                .replaceAll("[^a-z0-9]+", "_")
-                .replaceAll("^_+|_+$", "");
-        if (base.isEmpty()) base = "string_value";
-        if (Character.isDigit(base.charAt(0))) base = "s_" + base;
-
-        String key = base;
-        int suffix = 1;
-        while (sem.isXmlStringsExist(listMap, key)) {
-            key = base + "_" + suffix++;
-        }
-
-        HashMap<String, Object> newMap = new HashMap<>();
-        newMap.put("key", key);
-        newMap.put("text", value);
-        listMap.add(newMap);
-
-        XmlUtil.saveXml(stringsPath, sem.convertListMapToXmlStrings(listMap, sem.notesMap));
-        return "@string/" + key;
     }
 }

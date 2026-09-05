@@ -117,6 +117,8 @@ public class PropertyInputItem extends RelativeLayout implements View.OnClickLis
             case "property_inject" -> icon = R.drawable.ic_mtrl_code;
             case "property_convert" -> icon = R.drawable.ic_mtrl_switch;
             case "property_text_size" -> icon = R.drawable.ic_mtrl_font;
+            case "property_elevation" -> icon = R.drawable.ic_mtrl_elevation;
+            case "property_visibility" -> icon = R.drawable.ic_mtrl_visibility;
         }
         imageView.setImageResource(icon);
     }
@@ -220,10 +222,51 @@ public class PropertyInputItem extends RelativeLayout implements View.OnClickLis
                         Helper.getText(tvName),
                         Float.parseFloat(value.isEmpty() ? "1" : value),
                         0f, 50f, 1f, true);
+                        case "property_elevation" -> showHybridSliderDialog(
+                        Helper.getText(tvName),
+                        Float.parseFloat(value.isEmpty() ? "0" : value.replaceAll("[^0-9.]", "")),
+                        0f, 50f, 1f, true);
+                case "property_visibility" -> showVisibilityDialog();
                 case "property_convert" -> showAutoCompleteDialog();
                 case "property_inject" -> showInjectDialog();
             }
         }
+    }
+    
+    private void showVisibilityDialog() {
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(getContext());
+        dialog.setTitle(Helper.getText(tvName));
+        dialog.setIcon(icon);
+
+        String[] options = {"visible", "invisible", "gone"};
+        int checkedItem = -1;
+        
+        for (int i = 0; i < options.length; i++) {
+            if (options[i].equals(value)) {
+                checkedItem = i;
+                break;
+            }
+        }
+
+        dialog.setSingleChoiceItems(options, checkedItem, (d, which) -> {
+            setValue(options[which]);
+            if (valueChangeListener != null) {
+                valueChangeListener.a(key, value);
+            }
+            d.dismiss();
+        });
+
+        // Add a Reset button to clear XML injection
+        dialog.setNeutralButton(Helper.getResString(R.string.common_word_reset), (d, which) -> {
+            setValue("");
+            if (valueChangeListener != null) {
+                valueChangeListener.a(key, "");
+            }
+            d.dismiss();
+        });
+
+        dialog.setNegativeButton(Helper.getResString(R.string.common_word_cancel), null);
+        dialog.show();
     }
 
     private void showHybridSliderDialog(String propertyName, float currentValue, float minValue, float maxValue, float stepSize, boolean isInteger) {

@@ -154,6 +154,7 @@ public class wq {
             case 46 -> "otpview";
             case 47 -> "codeview";
             case 48 -> "recyclerview";
+            case 50 -> "constraintlayout";
             default -> "widget";
         };
     }
