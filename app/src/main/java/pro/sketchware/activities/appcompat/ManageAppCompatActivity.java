@@ -33,7 +33,6 @@ import pro.sketchware.databinding.ManageAppCompatBinding;
 import pro.sketchware.utility.FileUtil;
 import pro.sketchware.utility.SketchwareUtil;
 import pro.sketchware.utility.UI;
-import pro.sketchware.utility.TranslationFunction;
 
 public class ManageAppCompatActivity extends BaseAppCompatActivity {
 
@@ -268,6 +267,9 @@ public class ManageAppCompatActivity extends BaseAppCompatActivity {
                     injectionValue.substring(
                             injectionValue.indexOf("\"") + 1, injectionValue.length() - 1));
         }
+
+        AttributeInputHelper.wire(this, sc_id, attributeBinding.inputAttr,
+                attributeBinding.inputLayoutValue, attributeBinding.inputValue);
 
         dialog.setPositiveButton(
                 R.string.common_word_save,

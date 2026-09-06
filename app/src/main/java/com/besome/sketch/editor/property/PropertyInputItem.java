@@ -2,6 +2,7 @@ package com.besome.sketch.editor.property;
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.Editable;
@@ -1198,6 +1199,10 @@ public class PropertyInputItem extends RelativeLayout implements View.OnClickLis
 
         binding.tiInput.setHint(
                 String.format(Helper.getResString(R.string.property_enter_value), attr));
+
+        if (getContext() instanceof Activity) {
+            AttributeInputHelper.wireFixed((Activity) getContext(), sc_id, attr, binding.tiInput, input);
+        }
 
         builder.setView(binding.getRoot());
         EditText finalInput = input;
