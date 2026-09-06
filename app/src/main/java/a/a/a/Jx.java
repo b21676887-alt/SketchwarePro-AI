@@ -1188,7 +1188,8 @@ public class Jx {
                  ViewBeans.VIEW_TYPE_WIDGET_LOTTIEANIMATIONVIEW,
                  ViewBeans.VIEW_TYPE_WIDGET_YOUTUBEPLAYERVIEW,
                  ViewBeans.VIEW_TYPE_LAYOUT_TABLAYOUT,
-                 ViewBeans.VIEW_TYPE_LAYOUT_VIEWPAGER ->
+                 ViewBeans.VIEW_TYPE_LAYOUT_VIEWPAGER,
+                 ViewBean.VIEW_TYPE_LAYOUT_CONSTRAINT ->
                     true; // it's necessary for the adapters, listeners...
             default -> false;
         };
