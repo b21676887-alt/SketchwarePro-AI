@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/chat_background"
     android:fitsSystemWindows="true"
     tools:ignore="ContentDescription">
 
@@ -11,7 +10,6 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/chat_background"
         android:fitsSystemWindows="true"
         app:liftOnScrollColor="@android:color/transparent">
 
@@ -19,45 +17,28 @@
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_chat_toolbar"
             app:navigationIcon="?attr/homeAsUpIndicator"
-            app:navigationIconTint="@color/chat_text_primary"
-            app:title="@string/design_actionbar_title_manager_resources"
-            app:titleTextColor="@color/chat_text_primary" />
+            app:title="@string/design_actionbar_title_manager_resources" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/chat_surface"
+            android:background="@android:color/transparent"
             app:tabMode="scrollable"
             app:tabGravity="fill" />
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:dividerColor="@color/chat_border" />
+            app:dividerColor="?attr/colorSurfaceContainerHighest" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <LinearLayout
-            android:id="@+id/ad_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical" />
-    </LinearLayout>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab"

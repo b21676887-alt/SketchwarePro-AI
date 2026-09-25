@@ -23,12 +23,9 @@
                 android:id="@+id/topAppBar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@drawable/bg_chat_toolbar"
                 app:layout_collapseMode="pin"
                 app:navigationIcon="?attr/homeAsUpIndicator"
-                app:navigationIconTint="@color/chat_text_primary"
-                app:title="@string/compile_log_title_last"
-                app:titleTextColor="@color/chat_text_primary" />
+                app:title="@string/compile_log_title_last" />
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -38,9 +35,7 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:fillViewport="true"
-        android:background="@color/chat_surface"
         android:paddingBottom="50dp"
-        android:layout_above="@id/ad_container"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <HorizontalScrollView

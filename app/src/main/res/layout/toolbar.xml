@@ -4,7 +4,6 @@
     style="@style/Widget.Material3Expressive.Toolbar.OnSurface"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="@drawable/bg_chat_toolbar"
     android:contentInsetStart="0dp"
     app:contentInsetStart="0dp"
     app:elevation="0dp"
@@ -16,9 +15,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:contentDescription="@string/title_sketchware"
-        android:padding="4dp"
         android:scaleType="fitCenter"
         android:src="@drawable/top_title_logo"
-        app:tint="@color/chat_accent" />
+        android:padding="4dp"
+        app:tint="?attr/colorPrimary" />
 
 </androidx.appcompat.widget.Toolbar>

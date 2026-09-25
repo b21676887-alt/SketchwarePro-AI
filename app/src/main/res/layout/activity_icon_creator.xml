@@ -3,23 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/chat_background"
     android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/chat_background">
+        android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@drawable/bg_chat_toolbar"
             app:navigationIcon="?attr/homeAsUpIndicator"
-            app:navigationIconTint="@color/chat_text_primary"
-            app:title="@string/myprojects_customize_icon"
-            app:titleTextColor="@color/chat_text_primary" />
+            app:title="@string/myprojects_customize_icon" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <LinearLayout

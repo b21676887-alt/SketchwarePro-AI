@@ -2,30 +2,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/chat_background"
     android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/chat_background"
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_chat_toolbar"
             app:navigationIcon="?attr/homeAsUpIndicator"
-            app:navigationIconTint="@color/chat_text_primary"
-            app:title="@string/about_title"
-            app:titleTextColor="@color/chat_text_primary" />
+            app:title="@string/about_title" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/chat_surface">
+            android:background="@android:color/transparent">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
@@ -46,28 +41,14 @@
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:dividerColor="@color/chat_border" />
+            app:dividerColor="?attr/colorSurfaceContainerHighest" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <LinearLayout
-            android:id="@+id/ad_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical" />
-    </LinearLayout>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/discordButton"
@@ -75,11 +56,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center|bottom"
         android:layout_margin="16dp"
-        android:layout_marginBottom="60dp"
-        android:text="@string/about_jointelegram"
-        android:textColor="#FFF"
-        app:backgroundTint="#24A1DE"
-        app:icon="@drawable/ic_telegram"
-        app:iconTint="#FFF" />
+        android:text="@string/about_joindiscord"
+        android:textColor="@android:color/white"
+        app:backgroundTint="#5865F2"
+        app:icon="@drawable/ic_discord"
+        app:iconTint="@android:color/white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
