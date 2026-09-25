@@ -230,7 +230,7 @@ public class MyProjectSettingActivity extends BaseAppCompatActivity implements V
         applyPackageNameLockIfNeeded();
         syncThemeColors();
         //AdManager.loadBanner(this, binding.adContainer, "ca-app-pub-6598765502914364/2478153475");
-        binding.adContainer.setVisibility(View.GONE);
+        //binding.adContainer.setVisibility(View.GONE);
     }
 
     @Override

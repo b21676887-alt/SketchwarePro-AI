@@ -11,7 +11,7 @@
     -->
 
     <style name="Widget.SketchwarePro.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
-        <item name="android:background">@color/chat_surface</item>
+        <item name="android:background">?attr/colorSurfaceContainer</item>
         <item name="elevation">0dp</item>
     </style>
 
@@ -46,9 +46,6 @@
 
     <style name="Widget.SketchwarePro.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
         <item name="shapeAppearance">@style/ShapeAppearance.Material3.Corner.Medium</item>
-        <item name="boxBackgroundColor">@color/chat_surface</item>
-        <item name="boxStrokeColor">@color/chat_border</item>
-        <item name="hintTextColor">@color/chat_text_secondary</item>
     </style>
 
     <style name="Widget.SketchwarePro.TextInputLayout.ExposedDropdownMenu" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
@@ -91,11 +88,11 @@
 
     <style name="Widget.SketchwarePro.BottomSheet.Modal" parent="Widget.Material3.BottomSheet">
         <item name="android:elevation">0dp</item>
-        <item name="backgroundTint">@color/chat_surface</item>
+        <item name="backgroundTint">?attr/colorSurface</item>
     </style>
 
     <style name="ThemeOverlay.SketchwarePro.AlertDialog" parent="ThemeOverlay.Material3Expressive.MaterialAlertDialog.Centered">
-        <item name="android:colorBackground">@color/chat_surface</item>
+        <item name="android:colorBackground">?attr/colorSurfaceContainer</item>
         <item name="android:windowAnimationStyle">@style/MaterialAlertDialog.Material3.Animation
         </item>
         <item name="android:windowSoftInputMode">adjustResize</item>
@@ -121,10 +118,8 @@
     </style>
 
     <style name="Widget.SketchwarePro.CardView" parent="Widget.Material3.CardView.Filled">
-        <item name="cardCornerRadius">8dp</item>
-        <item name="cardBackgroundColor">@color/chat_surface</item>
-        <item name="strokeColor">@color/chat_border</item>
-        <item name="strokeWidth">1dp</item>
+        <item name="cardCornerRadius">18dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainer</item>
     </style>
 
     <style name="Widget.SketchwarePro.Chip" parent="Widget.Material3.Chip.Input.Icon.Elevated">

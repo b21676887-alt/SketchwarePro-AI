@@ -94,7 +94,7 @@
     <!-- Chat Design Colors -->
     <color name="chat_background">#F6F9FF</color>
     <color name="kelivo_tool_surface">#F3F0FA</color>
-    <color name="chat_surface">#F6F9FF</color>
+    <color name="chat_surface">#ffe6eff8</color>
     <color name="chat_surface_soft">#ECF4FE</color>
     <color name="chat_accent">#6B5CE7</color>
     <color name="store_play_blue">#0B57D0</color>

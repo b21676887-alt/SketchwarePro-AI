@@ -4,13 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/chat_background"
     android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/chat_background"
         android:fitsSystemWindows="true">
 
         <include
@@ -22,7 +20,7 @@
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:dividerColor="@color/chat_border" />
+            app:dividerColor="?attr/colorSurfaceContainerHighest" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/icon_pack_tabs"
@@ -51,8 +49,6 @@
         android:layout_marginBottom="20dp"
         android:layout_gravity="bottom|center"
         android:text="@string/common_word_filter"
-        android:textColor="@android:color/white"
-        app:backgroundTint="@color/chat_accent"
         app:icon="@drawable/ic_mtrl_tune" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

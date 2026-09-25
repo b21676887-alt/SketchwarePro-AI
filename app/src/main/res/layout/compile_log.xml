@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/chat_background"
     android:fitsSystemWindows="true"
     tools:ignore="ContentDescription">
 
@@ -11,14 +10,12 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/chat_background"
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/collapsingToolbarLayoutLargeSize"
-            android:background="@color/chat_background"
             android:fitsSystemWindows="true"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
@@ -69,7 +66,7 @@
         android:id="@+id/noContentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/chat_background"
+        android:background="?attr/colorSurface"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingHorizontal="24dp"
@@ -82,7 +79,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/compile_log_empty_title"
-            android:textColor="@color/chat_text_primary"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="20sp" />
 
         <TextView
@@ -91,7 +88,7 @@
             android:layout_marginTop="4dp"
             android:gravity="center"
             android:text="@string/compile_log_empty_message"
-            android:textColor="@color/chat_text_secondary"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:textSize="14sp" />
 
     </LinearLayout>

@@ -2,12 +2,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/chat_surface"
     android:orientation="vertical"
-    android:paddingStart="12dp"
-    android:paddingTop="10dp"
-    android:paddingEnd="12dp"
-    android:paddingBottom="10dp">
+    android:paddingHorizontal="@dimen/main_drawer_horizontal_padding"
+    android:paddingTop="16dp"
+    android:paddingBottom="8dp">
 
     <View
         android:id="@+id/status_bar_overlapper"
