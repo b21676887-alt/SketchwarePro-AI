@@ -43,7 +43,7 @@
     <string name="ai_layout_generator_success">تم تطبيق التخطيط على %s</string>
     <string name="ai_layout_generator_title">إنشاء تخطيط بالذكاء الاصطناعي</string>
     <string name="androidx_startup">androidx.startup</string>
-    <string name="app_name">Sketchware IA</string>
+    <string name="app_name">سكتشوير Ai</string>
     <string name="assets_manager_add_file">استيراد ملف</string>
     <string name="assets_manager_add_new">إنشاء جديد</string>
     <string name="assets_manager_nofiles_body">لا توجد لديك أي ملفات هنا بعد، جرب إنشاء ملف جديد.</string>
