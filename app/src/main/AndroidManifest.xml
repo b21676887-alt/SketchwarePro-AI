@@ -364,9 +364,9 @@
         <!-- AdMob Application ID — MUST be inside <application>.
              Replace with your real App ID before publishing to production.
              Current ID: ca-app-pub-6598765502914364~4726281593 -->
-        <meta-data
+        <!--meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-6598765502914364~4726281593" />
+            android:value="ca-app-pub-6598765502914364~4726281593" /-->
 
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"

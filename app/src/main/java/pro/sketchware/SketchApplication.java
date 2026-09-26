@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.core.os.LocaleListCompat;
 import androidx.appcompat.app.AppCompatDelegate;
 import com.besome.sketch.tools.CollectErrorActivity;
-import pro.sketchware.utility.AdManager;
 import pro.sketchware.utility.TranslationFunction;
 import pro.sketchware.utility.theme.ThemeManager;
 import pro.sketchware.activities.settings.fragments.language.LanguageOverrideContextWrapper;
@@ -74,6 +73,5 @@ public class SketchApplication extends Application {
         super.onCreate();
         LanguageOverrideManager.getInstance().init(this);
         ThemeManager.applyTheme(this, ThemeManager.getCurrentTheme(this));
-        AdManager.initialize(this);
     }
 }

@@ -45,7 +45,6 @@ import pro.sketchware.activities.resourceseditor.components.models.ColorModel;
 import pro.sketchware.databinding.ResourcesEditorImportDialogBinding;
 import pro.sketchware.databinding.ResourcesEditorsActivityBinding;
 import pro.sketchware.databinding.ResourcesVariantSelectorDialogBinding;
-import pro.sketchware.utility.AdManager;
 import pro.sketchware.utility.FileUtil;
 import pro.sketchware.utility.PropertiesUtil;
 import pro.sketchware.utility.SketchwareUtil;
@@ -451,7 +450,6 @@ public class ResourcesEditorActivity extends BaseAppCompatActivity {
             }
         }).attach();
         UI.animateLayoutChanges(binding.viewPager);
-        //AdManager.loadBanner(this, findViewById(R.id.ad_container), "ca-app-pub-6598765502914364/2542249577");
         
     }
 

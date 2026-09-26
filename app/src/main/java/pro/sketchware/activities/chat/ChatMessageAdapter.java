@@ -25,19 +25,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.ads.nativead.NativeAd;
-import com.google.android.gms.ads.nativead.NativeAdView;
-
-import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.noties.markwon.Markwon;
 import pro.sketchware.R;
-import pro.sketchware.utility.AdManager;
 
 public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -47,14 +41,10 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static final int VIEW_TYPE_CHECKPOINT = 4;
     private static final int VIEW_TYPE_AWAITING = 5;
     private static final int VIEW_TYPE_INTERRUPTED_TOOL = 6;
-    private static final int VIEW_TYPE_NATIVE_AD = 7;
-    private static final int NATIVE_AD_INTERVAL = 6;
 
     private final List<ChatMessage> messages;
     private Markwon markwon;
     private MessageActionListener actionListener;
-    private WeakReference<NativeAd> currentNativeAd = new WeakReference<>(null);
-    private final AtomicBoolean nativeAdRequested = new AtomicBoolean(false);
 
     public interface MessageActionListener {
         void onRegenerate(int position);
@@ -73,18 +63,6 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public ChatMessageAdapter(Context context, List<ChatMessage> messages) {
         this.messages = messages;
-        int botCount = 0;
-        for (ChatMessage msg : messages) {
-            if (isBotMessage(msg)) {
-                botCount++;
-            }
-        }
-        if (botCount >= NATIVE_AD_INTERVAL) {
-            AdManager.preloadNativeAd(context);
-        } else {
-            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(
-                    () -> AdManager.preloadNativeAd(context), 800L);
-        }
     }
 
     public void setMessageActionListener(MessageActionListener listener) {
@@ -98,78 +76,9 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return markwon;
     }
 
-    private boolean isBotMessage(ChatMessage msg) {
-        if (msg == null) return false;
-        if (msg.isInterruptedStreamingTool()) return false;
-        if (msg.getType() == ChatMessage.TYPE_TOOL) return false;
-        if (msg.isUser()) return false;
-        if (msg.isCheckpoint()) return false;
-        if (msg.isAwaitingUser()) return false;
-        return true;
-    }
-
-    private int countTotalNativeAds() {
-        int botCount = 0;
-        int ads = 0;
-        for (ChatMessage msg : messages) {
-            if (isBotMessage(msg)) {
-                botCount++;
-                if (botCount == NATIVE_AD_INTERVAL) ads = 1;
-            }
-        }
-        return ads;
-    }
-
-    public boolean isNativeAdPosition(int virtualPosition) {
-        int botCount = 0;
-        int virtualCursor = 0;
-        for (int i = 0; i < messages.size(); i++) {
-            if (virtualCursor == virtualPosition) {
-                return false;
-            }
-            virtualCursor++;
-            ChatMessage msg = messages.get(i);
-            if (isBotMessage(msg)) {
-                botCount++;
-                if (botCount == NATIVE_AD_INTERVAL) {
-                    if (virtualCursor == virtualPosition) {
-                        return true;
-                    }
-                    virtualCursor++;
-                }
-            }
-        }
-        return false;
-    }
-
-    public int translateToMessagePosition(int virtualPosition) {
-        int botCount = 0;
-        int virtualCursor = 0;
-        for (int i = 0; i < messages.size(); i++) {
-            if (virtualCursor == virtualPosition) {
-                return i;
-            }
-            virtualCursor++;
-            ChatMessage msg = messages.get(i);
-            if (isBotMessage(msg)) {
-                botCount++;
-                if (botCount == NATIVE_AD_INTERVAL) {
-                    if (virtualCursor == virtualPosition) {
-                        return -1;
-                    }
-                    virtualCursor++;
-                }
-            }
-        }
-        return -1;
-    }
-
     @Override
     public int getItemViewType(int position) {
-        if (isNativeAdPosition(position)) {
-            return VIEW_TYPE_NATIVE_AD;
-        }
-        ChatMessage msg = messages.get(translateToMessagePosition(position));
+        ChatMessage msg = messages.get(position);
         if (msg.isInterruptedStreamingTool()) return VIEW_TYPE_INTERRUPTED_TOOL;
         if (msg.getType() == ChatMessage.TYPE_TOOL) return VIEW_TYPE_TOOL;
         if (msg.isUser()) return VIEW_TYPE_USER;
@@ -183,8 +92,6 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch (viewType) {
-            case VIEW_TYPE_NATIVE_AD:
-                return new NativeAdViewHolder(inflater.inflate(R.layout.item_native_ad, parent, false));
             case VIEW_TYPE_TOOL:
                 return new ToolViewHolder(inflater.inflate(R.layout.item_message_tool, parent, false));
             case VIEW_TYPE_USER:
@@ -199,69 +106,12 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof NativeAdViewHolder) {
-            bindNativeAd((NativeAdViewHolder) holder);
-            return;
-        }
-
-        ChatMessage message = messages.get(translateToMessagePosition(position));
+        ChatMessage message = messages.get(position);
 
         if (holder instanceof MessageViewHolder) {
             bindMessage((MessageViewHolder) holder, message);
         } else if (holder instanceof ToolViewHolder) {
             bindTool((ToolViewHolder) holder, message);
-        }
-    }
-
-    private void bindNativeAd(@NonNull NativeAdViewHolder holder) {
-        NativeAd cached = currentNativeAd.get();
-        if (cached != null) {
-            AdManager.populateNativeAdView(cached, holder.adView);
-        } else {
-            AdManager.consumeCachedNativeAd(new AdManager.NativeAdContainerBinder() {
-                @Override
-                public void bind(@NonNull NativeAd nativeAd) {
-                    currentNativeAd = new WeakReference<>(nativeAd);
-                    if (holder.adView != null && holder.itemView != null) {
-                        holder.itemView.post(() ->
-                                AdManager.populateNativeAdView(nativeAd, holder.adView));
-                    }
-                }
-
-                @Override
-                public Context getContext() {
-                    return holder.itemView != null ? holder.itemView.getContext() : null;
-                }
-            }, new AdManager.NativeAdLoadCallback() {
-                @Override
-                public void onNativeAdLoaded(@NonNull NativeAd nativeAd) {
-                    currentNativeAd = new WeakReference<>(nativeAd);
-                    if (holder.adView != null && holder.itemView != null) {
-                        holder.itemView.post(() ->
-                                AdManager.populateNativeAdView(nativeAd, holder.adView));
-                    }
-                }
-            });
-        }
-
-        if (nativeAdRequested.compareAndSet(false, true)) {
-            Context ctx = holder.itemView != null ? holder.itemView.getContext() : null;
-            if (ctx != null) {
-                AdManager.preloadNativeAd(ctx, AdManager.NATIVE_AD_UNIT_ID,
-                        new AdManager.NativeAdLoadCallback() {
-                            @Override
-                            public void onNativeAdLoaded(@NonNull NativeAd nativeAd) {
-                                nativeAdRequested.set(false);
-                            }
-
-                            @Override
-                            public void onNativeAdFailedToLoad(@NonNull com.google.android.gms.ads.LoadAdError error) {
-                                nativeAdRequested.set(false);
-                            }
-                        });
-            } else {
-                nativeAdRequested.set(false);
-            }
         }
     }
 
@@ -413,24 +263,18 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (holder.actionRefresh != null) {
             holder.actionRefresh.setVisibility(message.isUser() ? View.GONE : View.VISIBLE);
             holder.actionRefresh.setOnClickListener(v -> {
-                int virtualPosition = holder.getBindingAdapterPosition();
-                if (actionListener != null && virtualPosition != RecyclerView.NO_POSITION) {
-                    int realPosition = translateToMessagePosition(virtualPosition);
-                    if (realPosition >= 0) {
-                        actionListener.onRegenerate(realPosition);
-                    }
+                int position = holder.getBindingAdapterPosition();
+                if (actionListener != null && position != RecyclerView.NO_POSITION) {
+                    actionListener.onRegenerate(position);
                 }
             });
         }
         if (holder.actionEdit != null) {
             holder.actionEdit.setVisibility((message.isUser() || message.isBot()) ? View.VISIBLE : View.GONE);
             holder.actionEdit.setOnClickListener(v -> {
-                int virtualPosition = holder.getBindingAdapterPosition();
-                if (actionListener != null && virtualPosition != RecyclerView.NO_POSITION) {
-                    int realPosition = translateToMessagePosition(virtualPosition);
-                    if (realPosition >= 0) {
-                        actionListener.onEdit(realPosition);
-                    }
+                int position = holder.getBindingAdapterPosition();
+                if (actionListener != null && position != RecyclerView.NO_POSITION) {
+                    actionListener.onEdit(position);
                 }
             });
         }
@@ -452,12 +296,9 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
         if (holder.actionMore != null) {
             holder.actionMore.setOnClickListener(v -> {
-                int virtualPosition = holder.getBindingAdapterPosition();
-                if (virtualPosition != RecyclerView.NO_POSITION) {
-                    int realPosition = translateToMessagePosition(virtualPosition);
-                    if (realPosition >= 0) {
-                        showMoreMenu(v, realPosition, message, copyText);
-                    }
+                int position = holder.getBindingAdapterPosition();
+                if (position != RecyclerView.NO_POSITION) {
+                    showMoreMenu(v, position, message, copyText);
                 }
             });
         }
@@ -748,15 +589,11 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         holder.imgExpand.setImageResource(expanded ? R.drawable.ic_mtrl_arrow_up : R.drawable.ic_mtrl_arrow_down);
 
         holder.layoutToolHeader.setOnClickListener(v -> {
-            int virtualPosition = holder.getBindingAdapterPosition();
-            if (virtualPosition == RecyclerView.NO_POSITION) {
+            int position = holder.getBindingAdapterPosition();
+            if (position == RecyclerView.NO_POSITION) {
                 return;
             }
-            int realPosition = translateToMessagePosition(virtualPosition);
-            if (realPosition < 0) {
-                return;
-            }
-            ChatMessage currentMessage = messages.get(realPosition);
+            ChatMessage currentMessage = messages.get(position);
             boolean currentAwaiting = currentMessage.getRequiresApproval() && !currentMessage.isApproved() && !currentMessage.isRejected();
             if (currentAwaiting || currentMessage.isToolRunning() || !hasExpandableDetails(currentMessage,
                     ChatMessage.hasVisibleText(sanitizeText(currentMessage.getToolResult())),
@@ -764,7 +601,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 return;
             }
             currentMessage.setExpanded(!currentMessage.isExpanded());
-            notifyItemChanged(virtualPosition);
+            notifyItemChanged(position);
         });
     }
 
@@ -827,26 +664,13 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if (dots != null) {
                 dots.stopAnimation();
             }
-        } else if (holder instanceof NativeAdViewHolder) {
-            NativeAdView adView = ((NativeAdViewHolder) holder).adView;
-            if (adView != null) {
-                adView.setHeadlineView(null);
-                adView.setBodyView(null);
-                adView.setCallToActionView(null);
-                adView.setIconView(null);
-                adView.setStarRatingView(null);
-                adView.setMediaView(null);
-                adView.setAdvertiserView(null);
-                adView.setStoreView(null);
-                adView.setPriceView(null);
-            }
         }
         super.onViewRecycled(holder);
     }
 
     @Override
     public int getItemCount() {
-        return messages.size() + countTotalNativeAds();
+        return messages.size();
     }
 
     public static class MessageViewHolder extends RecyclerView.ViewHolder {
@@ -930,15 +754,6 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             layoutApproval = itemView.findViewById(R.id.layout_approval);
             btnApprove = itemView.findViewById(R.id.btn_approve_tool);
             btnReject = itemView.findViewById(R.id.btn_reject_tool);
-        }
-    }
-
-    public static class NativeAdViewHolder extends RecyclerView.ViewHolder {
-        final NativeAdView adView;
-
-        public NativeAdViewHolder(@NonNull View itemView) {
-            super(itemView);
-            adView = (NativeAdView) itemView;
         }
     }
 }

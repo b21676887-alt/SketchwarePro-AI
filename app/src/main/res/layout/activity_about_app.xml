@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center|bottom"
         android:layout_margin="16dp"
-        android:text="@string/about_joindiscord"
+        android:text="@string/about_jointelegram"
         android:textColor="@android:color/white"
         app:backgroundTint="#5865F2"
         app:icon="@drawable/ic_discord"

@@ -27,12 +27,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <LinearLayout
-        android:id="@+id/ad_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical" />
 
     <io.github.rosemoe.sora.widget.CodeEditor
         android:id="@+id/editor"

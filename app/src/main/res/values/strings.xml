@@ -2422,7 +2422,7 @@ Please try again later"</string>
     <string name="title_company_url">Website</string>
     <string name="title_compatible_chrome_browser">Chrome Browser Required</string>
     <string name="title_telegram_community">Telegram</string>
-    <string name="title_sketchware">Sketchware IA</string>
+    <string name="title_sketchware">Sketchware AI</string>
     <string name="view_panel_title_layouts">Layouts</string>
     <string name="view_panel_title_properties">Properties</string>
     <string name="view_panel_title_widgets">Widgets</string>
@@ -2519,7 +2519,7 @@ Please try again later"</string>
     <string name="assets_manager_rename">Rename</string>
 
     
-    <string name="about_title">About Sketchware IA</string>
+    <string name="about_title">About Sketchware AI</string>
     <string name="about_team_title">The team</string>
     <string name="about_specialthanks_title">Special Thanks</string>
     <string name="about_changelog_title">Changelog</string>
@@ -3002,7 +3002,7 @@ Please try again later"</string>
 
     
     <string name="donation_dialog_title">Support the project</string>
-    <string name="donation_dialog_message">If you enjoy Sketchware IA, consider making a donation to support ongoing development and keep the project alive.</string>
+    <string name="donation_dialog_message">If you enjoy Sketchware AI, consider making a donation to support ongoing development and keep the project alive.</string>
     <string name="donation_button_donate">Donate</string>
     <string name="donation_button_cancel">Cancel</string>
     <string name="main_drawer_title_donate">Donate</string>

@@ -46,7 +46,6 @@ import mod.hey.studios.util.Helper;
 import mod.hilal.saif.components.ComponentsHandler;
 import mod.jbk.util.OldResourceIdMapper;
 import pro.sketchware.R;
-import pro.sketchware.utility.AdManager;
 import pro.sketchware.utility.FileUtil;
 import pro.sketchware.utility.SketchwareUtil;
 import pro.sketchware.utility.TranslationFunction;
@@ -123,7 +122,6 @@ public class ManageCustomComponentActivity extends BaseAppCompatActivity {
             });
         }
 
-        //AdManager.loadBanner(this, findViewById(R.id.ad_container), "ca-app-pub-6598765502914364/9870075252");
     }
 
     @Override

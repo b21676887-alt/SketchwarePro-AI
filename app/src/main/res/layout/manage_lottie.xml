@@ -40,13 +40,6 @@
             android:layout_marginHorizontal="12dp"
             android:layout_weight="1" />
 
-        <LinearLayout
-            android:id="@+id/ad_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical" />
-
     </LinearLayout>
 
     <LinearLayout
