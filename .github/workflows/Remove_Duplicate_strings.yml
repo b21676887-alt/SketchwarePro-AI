@@ -18,53 +18,140 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
           python-version: '3.x'
 
-      - name: Remove Duplicate Keys from strings.xml
-        shell: python
+      - name: Remove Duplicate Keys from strings.xml (robust)
+        env:
+          DRY_RUN: 'false'   # set to 'true' for testing without writing
         run: |
-          import glob
-          import os
+          python - <<'PY'
+          import glob, shutil, os, sys, tempfile
           import xml.etree.ElementTree as ET
+          from pathlib import Path
 
-          # البحث عن ملف strings.xml
-          files = glob.glob('**/strings.xml', recursive=True)
+          dry_run = os.environ.get("DRY_RUN", "false").lower() == "true"
 
-          if files:
-              file_path = files[0]
-              print(f"Processing duplicate keys in {file_path}...")
-              
-              tree = ET.parse(file_path)
-              root = tree.getroot()
+          def text_of(elem):
+              return "".join(elem.itertext()).strip() if elem is not None else ""
 
-              seen_names = set()
-              duplicates_count = 0
+          changed_files = []
+          reports = []
+
+          files = sorted(glob.glob('**/strings.xml', recursive=True))
+          if not files:
+              print("No strings.xml files found.")
+              sys.exit(0)
+
+          for file_path in files:
+              p = Path(file_path)
+              print(f"Processing {file_path}...")
+
+              # Backup outside repo so we do not create .bak files inside the branch
+              bak = Path(tempfile.gettempdir()) / (p.name + ".bak")
+              try:
+                  shutil.copy2(p, bak)
+              except Exception as e:
+                  print(f"Warning: failed to create backup {bak}: {e}")
+
+              try:
+                  tree = ET.parse(p)
+                  root = tree.getroot()
+              except Exception as e:
+                  print(f"Error parsing {file_path}: {e}")
+                  continue
+
+              seen = {}
+              removed = []
 
               for elem in list(root):
-                  if elem.tag == 'string':
-                      name = elem.get('name')
-                      if name in seen_names:
-                          root.remove(elem)
-                          duplicates_count += 1
+                  name = elem.get('name')
+                  tag = elem.tag
+                  if name:
+                      key = (tag, name)
+                      if key in seen:
+                          prev = seen[key]
+                          prev_text = text_of(prev)
+                          cur_text = text_of(elem)
+                          if not prev_text and cur_text:
+                              idx_prev = list(root).index(prev)
+                              root.insert(idx_prev, elem)
+                              root.remove(prev)
+                              seen[key] = elem
+                              removed.append((name, tag, "replaced previous empty with non-empty"))
+                          else:
+                              root.remove(elem)
+                              removed.append((name, tag, "removed duplicate (kept first)"))
                       else:
-                          seen_names.add(name)
+                          seen[key] = elem
+                  else:
+                      continue
 
-              if duplicates_count > 0:
-                  tree.write(file_path, encoding='utf-8', xml_declaration=True)
-                  print(f"Successfully removed {duplicates_count} duplicate key(s).")
+              if removed:
+                  reports.append((file_path, removed))
+                  if not dry_run:
+                      try:
+                          ET.indent(tree, space="    ")
+                      except Exception:
+                          pass
+                      tree.write(file_path, encoding='utf-8', xml_declaration=True)
+                      changed_files.append(file_path)
+                      print(f"Updated {file_path}: removed {len(removed)} duplicate(s).")
+                  else:
+                      print(f"DRY RUN: would remove {len(removed)} duplicate(s) in {file_path}.")
               else:
-                  print("No duplicate keys found.")
-          else:
-              print("Warning: strings.xml file not found.")
+                  print(f"No duplicates found in {file_path}.")
 
-      - name: Commit and Push Cleaned Files
+          if reports:
+              print("\n=== Duplicate removal report ===")
+              for fp, items in reports:
+                  print(f"\nFile: {fp}")
+                  for name, tag, reason in items:
+                      print(f"  - {tag} name=\"{name}\": {reason}")
+          else:
+              print("\nNo duplicates detected across processed files.")
+
+          if dry_run and reports:
+              print("\nDRY RUN MODE: changes were detected but not applied.")
+              sys.exit(2)
+
+          if changed_files:
+              print("\nCHANGED_FILES:" + ",".join(changed_files))
+          PY
+
+      - name: Commit and Push Cleaned Files (only changed files)
+        shell: bash
         run: |
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
-          git add .
-          git commit -m "chore: Remove duplicate keys from strings.xml [skip ci]" || echo "No changes to commit"
-          git push
+
+          BRANCH="${GITHUB_REF_NAME:-${GITHUB_REF#refs/heads/}}"
+
+          # Make sure we're based on latest remote state before pushing
+          git fetch origin "${BRANCH}"
+          git rebase "origin/${BRANCH}" || git pull --rebase origin "${BRANCH}" || true
+
+          # Remove any accidental .bak files if they exist
+          git rm --ignore-unmatch $(git ls-files '*.bak') || true
+          find . -name '*.bak' -type f -delete || true
+
+          # Only include actual strings.xml files; do not include strings.xml.bak
+          CHANGED=$(git status --porcelain | awk '/strings\.xml$/ {print $2}' | uniq || true)
+
+          if [ -n "$CHANGED" ]; then
+            echo "Committing changed files:"
+            echo "$CHANGED"
+            for f in $CHANGED; do
+              git add "$f"
+            done
+            git commit -m "chore: remove duplicate string keys [skip ci]" || echo "No commit needed"
+            git push origin HEAD:"${BRANCH}"
+          else
+            echo "No strings.xml changes to commit."
+          fi
